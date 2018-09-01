@@ -1,0 +1,403 @@
+0. TABLE OF CONTENTS
+====================
+
+1. OVERVIEW
+2. KNOWN LIMITATIONS/ASSUMPTIONS
+3. DIRECTORY STRUCTURE
+4. DESIGN PRINCIPLES
+5. HOW IT WORKS
+6. USAGE GUIDE
+7. PROGRAMMERS GUIDE
+8. CONTRIBUTING/LICENSE
+
+1. OVERVIEW
+===========
+TensorFI is a  fault injector for applications written using the TensorFlow 
+framework. Unlike existing fault injectors such as LLFI, FSEFI, PINFI, etc.
+TensorFI attempts to inject high-level faults directly into TensorFlow
+programs. Because TensorFlow programs are written as dataflow graphs, we
+need to inject faults at the level of graph nodes in TensorFlow. This ensures
+that programmers can establish a one-to-one correspondence between the 
+injected fault and the effect of the fault on the machine learning algorithm.
+
+
+2. KNOWN LIMITATIONS/ASSUMPTIONS
+============================
+
+1. Faults can only be injected during testing, not training
+2. We only support multi-threaded fault injections, not multi-process
+3. We assue there's only one main graph per TensorFlow session
+4. Many standard neural network (NN) operators such as MaxPool have either
+not been implemented, or have bugs. So complex NN's aren't supported
+5. There's a race condition in logging the run count for multithreaded
+injections due to TensorFlow's spawning of internal threads.
+
+3. DIRECTORY STRUCTURE:
+========================
+
+Tests - Tests for TensorFI
+TensorFI - TensorFI library and source code
+confFiles - Configuration files for injection 
+
+4. DESIGN PRINCIPLES
+====================
+
+TensorFI is designed with the following design principles in mind:
+
+1. Ease of Use and Compatibility: To use TensorFI, all the programmer has to
+do is to incorporate a *single* line of Python code in her program. Everything
+else happens behind the scenes automatically (see below). We also assume that
+the programmer has access to the master session in which the TensorFlow
+graph is constructed, but we do not assume the programmer knows either where
+the graph is being constructed, nor where it is executed. This also ensures
+compatibility with third-party libraries and sophisticated training algorithms
+that may construct the graph using custom API methods or even
+
+2. Portability: Because TensorFlow may be pre-installed on the system, and 
+each individual system may have its own installation of TensorFlow, we do not
+assume the programmer is able to make any modifications to TensorFlow. All
+that is needed is that she imports our main fault injection library into the 
+Python program. We also use only the publicly documented API of TensorFlow
+(see ASSUMPTIONS), and hence the injector does not depend on the internal
+implementation of TensorFlow, nor does it have specific version dependencies.
+
+3. Speed of Execution: The third and final principle is that TensorFI should
+not interfere with the normal execution of the TensorFlow graph when no faults
+are executed. Further, it should not make the main graph incapable of being
+executed on GPUs or parallelized due to the modifications it makes. Finally,
+the fault injection process should be reasonably fast, though it does not
+have to be as optimized as the main graph, or be capable of being parallelized.
+
+5. HOW IT WORKS
+================
+
+TensorFI works in two stages as follows. First, it instruments the entire 
+TensorFI graph by inserting custom fault injection nodes in it, and overriding
+the run method of the main session. Second, at runtime, it checks if a fault is
+to be injected, and if so, calls the inserted fault injection nodes which then
+perform the actual fault injection in accordance with the configured options.
+
+1. Instrumentation Phase:
+-------------------------
+In this phase, TensorFI walks the main graph of the session (see ASSUMPTIONS)
+and creates a custom copy of every node in the graph. The custom operations
+mimic the operations of the original nodes when no faults are injected, and
+actually perform the fault injections at runtime when faults are injected.
+Because the original nodes are not disturbed in any ways, except perhaps to 
+add more out-degree to constants, variables and placeholder nodes, TensorFI
+does not inhibit any optimizations or parallelization of the original graph
+(design principle 3). Further, the extra nodes inserted neither have control
+dependencies on the original nodes, nor do they induce new control 
+dependencies. As a result, the execution of the original graph is not affected.
+Finally, the instrumentation phase also "monkey patches" the main session's
+run function, so that it can invoked the custom nodes at runtime for injection.
+
+
+2. Execution and Injection Phase:
+---------------------------------
+In this phase, the session's run method first checks if faults are to be injected,
+and if so, it invokes the run operation on the custom nodes that were inserted.
+These in turn mimic the execution of the original nodes, until a node that
+is chosen for fault injection if encountered. At this point, it checks if 
+the other fault injection criteria are met (e.g., it's executed after skipCount,
+and its' probability of injection matches the current execution). If so, then
+the fault is injected into the *result* scalar or Tensor value of the node
+depending on the fault type chosen. For example, a RAND fault would replace
+the correct scalar/tensor value with a randomly chosen scalar/tensor value.
+Once the fault is injected, the execution continues for the rest of the nodes.
+Finally, the result value is returned by the monkey patched run method just
+like the original session's run method, so the client does not see any difference.
+This satisfies the first design goal, namely compatibility.
+
+
+6. USAGE GUIDE
+===============
+
+To use TensorFI, users must first import the master TensorFI library in their
+programs (e.g., import TensorFI as ti). Then they need to add the following line
+of code to their programs, *after* the main graph of the session is constructed
+but before it is run (NOTE: they need not know precisely where these are done,
+but they would need to somehow make sure their code is executed in between).
+
+import TensorFI as ti
+fi = ti.TensorFI(s)
+
+where s is the main session. Optionally, the following parameters can be given:
+
+1. fiConf: This is the location of the fault injection config file. If not 
+specified, it defaults to the file fiConf/default.yaml. Note that right now, 
+we only support YAML configuration files, but this can change in the future.
+If no config file can be found, then it uses a default configration for testing.
+
+
+2. logLevel: whether we want to enable debugging and information logging for 
+the fault injector. The default option is none. A value of 10 indicated debug,
+and 20 indicates info. These correspond to the standard Python logging levels.
+
+3. name: Each fault injector is optionally assigned a name string, which is used
+in debug logging. If no name is specified, then it is given the name "noName"
+
+4. disableInjections: This ia boolean variable, which if set to True, disables
+fault injections upon calling the run command. The default value is False, and
+hence injections are enabled as soon as the above line of code is encountered.
+But in some situations, it may be preferable to wait until later to perform
+the fault injections, e.g., when the user is using fiRun or fiLoop (later).
+
+5. fiPrefix: This is the prefix to attach to all fault injection nodes inserted
+by TensorFI, for easy identification in the graph (e.g., with TensorBoard).
+The default prefix is "fi_".
+
+Once the above line is encountered, TensorFI runs the instrumentation phase,
+and when the session.run() command is launched, it runs the execution phase. 
+From this point on, faults will be injected into the execution phase of the
+graph unless they were turned off using the diableInjections option above.
+
+All fault injections will be logged to a log file. See Logging below for
+more details about the log format.
+
+
+While this is all that is necessary to inject faults, often one wants more
+fine-grained control over the fault injection process and statistics reporting.
+To that end, TensorFI provides the following helper functions to developers:
+
+1. turnOnInjections()/turnOffInjections():
+These turn fault injections on and off respectively during the execution phase.
+
+2. launch(numInjections, diffFunction, collectStats): 
+
+This method is used to launch fault injections with the *last used*
+values of the arguments to the session.run function - these arguments are
+the tensorList that was passed to it, and the feed_dict parameters. Note
+that it is assumed that the session.run executed after the fault injector
+was used to initialize it - otherwise, it won't work. If you are not
+sure about this, use the Run method below. In addition, the following 
+options need to specified for the Launch method:
+	1. numInjections - The number of injections to be performed
+	2. diffFunction - A function that takes a single argument and
+		returns a single number to indicate the difference
+		between the correct result and the faulty run's value
+		that is passed as an argument. It is assumed that the
+		function "remembers" the correct run's value from before.
+		The difference value is used to update the statistics.	
+	3. collectStats - An optional parameter to collect the Injection
+		statistics (Default is None). If set, statistics are
+		collected using the specified collector. If the fileName
+		is specified in the statistics collector, then its 
+		contents are written to the file when it is destructed.
+	4. myID - An optional parameter that is used to identify the
+		thread that launches the injections in the debug logs.
+		It is set to 0 by default and used within pLaunch below.
+
+3. run(numInjections, diffFunctionGen, tensorList, feed_dict, collectStats): 
+	This is similar to the launch method except that it does not assume
+	that session.run has been called beofre. In fact, it explicitly calls
+	session.run with no faults injected, with the arguments tensorList
+	and feed_dict. It then enables fault injection and runs the injection
+	for "numInjection" times. Note that the parameter diffFunctionGen
+	differs from the diffFunction in launch as follows - the 
+	diffFunctionGen takes a single parameter as an argument (the correct
+	result value), and generates a function corresponding to diffFunction.
+	In other words, it is a generator for diffFunction that remembers the
+	correct result that is passed to it after the golden run execution.
+
+4. pLaunch(numberOfInjections, numberOfProcesses, diffFunction, collectStatsList, 
+		parallel, useProcesses, timeout)
+
+This method is used to launch fault injection processes in parallel. The
+semantics are identical to launch except that it launces multiple threads
+or processes, each with the lanuch method. The arguments are:
+
+	1. numberOfInjections - Same as numInjections in launch
+	2. numberOfProcesses - Number of threads/processes to launch in 
+		parallel. We use the term thread/process interchangeably.
+		NOTE: The injections will be evenly divided among the threads
+		except that the last thread will get more/less injections
+		depending on the total number of injections
+	3. diffFunction - Same as the launch method's diffFunction
+	4. collectStatsList - A list of FIStats objects that has at least
+		as many elements as the numeberOfProcesses. Each process
+		writes its statistics to a separate element of the list 
+		in order, so what you get is the statistics corresponding
+		to that process. You need to call collateStats with the
+		list passed to the pLaunch function after it's done in
+		order to collate all the statistics in one FiStats object.
+		NOTE: The behavior is unspecified if collectStatsList 
+		has objects of type other than FIStats.
+	5. parallel - Boolean flag to decide if the processes/threads
+		should be launched in parallel (default value is True).
+		It is pretty useful for debugging purposes.
+	6. useProcesses - Boolean flag to determine if processes or
+		threads should be used for parallelism. Default value is
+		False, which means threads are used by default. This is 
+		because TensorFlow doesn't play well with separate
+		processes and hangs (FIXME in the future). However, 
+		because Python uses a Global Interpreter Lock (GIL),
+		using threads may not result in true parallelism on
+		a multi-core machine, as the threads will be serialized.	
+	7. timeout - An optional parameter specifying the maximum amount 
+		of time to wait for a thread. The default value is None,
+		which means that there is no TimeOut. If it's specified,
+		the main thread will wait for atmost timeout seconds
+		in the join call. NOTE: The behavior of the timedout
+		thread can be unstable as the main thread will terminate
+		the session, and leave the timedout thread hanging ! 	
+		
+5.doneInjections: This resets the session and replaces the monkey patched run 
+	with the original run method. No faults can be injected after this call.  
+	The purpose of this function is to allow TensorFlow to run at native
+	speeds again after the injections are finished. 
+
+Config File: 
+------------
+You can get the configuration parameters by calling getFIConfig().
+This returns a FIConfig object (defined in fiConfig.py) whose
+fields can be used to read and modify the configuration values - 
+this is useful for running experiments by repeatedly chaning the 
+config parameters in each run. Though the config file is read
+only once at the beginning, any changes to the FIConfig streucture
+will be reflected in subsequent fault injection trials. The    
+injectMap field of FIConfig keeps track of the probabilities for
+injecting into each instruction, referenced by the Enum Ops.
+
+Logging: 
+--------
+
+By default, the fault injection logs are written to the file
+"name-log" where name is the name of the fault injector. The logs specify
+a. time of the injection (from experiment start time) 
+b. runCount of the injection (for each experiment)
+c. count of the chosen operation (within an experiment)
+d. Operation injected into (As specified in fiConfig.OpTypes)
+e. Original value of the injected scalar or Tensor
+f. Fault injected value of the injected scalar or Tensor
+
+In case of multi-threaded injections, each thread creates its own log file.
+These are suffixed with the name of the thread. In particular, TensorFlow uses a
+lot of dummy threads, so you will see a lot of log files ending with "-dummyThread".
+Note that logs are always appended to the prior run, so you'll have to manually
+erase the log files if you want a clean slate. Each experiment can be identified
+from the experiment start time line written above. Unforttunately, at this time,
+there is no easy way to map TensorFlow thread names to the names of the threads
+launched in the fault injector.
+
+FIXME: There's also a potential race condition in the runCount value logged
+to the fault log above, so users shouldn't rely on this value being correct.
+	
+7. PROGRAMMERS GUIDE
+====================
+
+NOTE:This section is subject to change due to the evolving nature of TensorFI
+
+The main files in TensorFI are as follows:
+
+	a. tensorFI.py: The main fault injector class with the externally
+		callable functions and the statistics gathering functions
+
+	b. modifyGraph.py: Functions to walk the tensorFlow graph and insert
+		fault injection nodes corresponding to the old ones 
+
+	c. injectFault.py: Functons to inject faults into different TensorFlow
+		operation nodes in the graph, and taking into account the
+		options in the configuration file for operation and instance
+
+	d. fiConfig.py: Fault configuration file options, and parsing routine
+		Also, the main class to store the fault configuration options
+
+	e. faultTypes.py: Different types of supported faults and the functions
+		corresponding to each fault type for both scalars and tensors
+	
+	f. fiStats.py: Collects statistics for different fault injection runs
+		Currently, only one default statisics gatherer is supported.
+
+	g. printGraph.py: Utility function to print the TensorFlow graph for
+		debugging purposes
+
+	h. fiLog.py: Logging fault injection runs for debugging and analysis
+
+Under normal circumstances, the details of these modules are hidden from 
+developers as they simply use the TensorFI package which exposes all of these.
+However, it is important to know the module names when extending TensorFI.
+	
+We now take the perspective of the programmer who wishes to extend the core 
+functionality of TensorFI in different ways, and explain how to do so:
+
+A. Adding a new fault type
+
+You should add two new functions to faultType.py for how the fault is to 
+be injected into scalars and tensors respectively. Then make the following
+changes to fiConfig.py (1) add the new fault type to the FaultTypes enum, and
+ (2) map the new fault type to the fault type functions in FIConfig.faultTypesMap
+
+B. Adding a new operation to inject
+
+To support new operations, you should add the operation name to the OPS enum
+in fiConfig.py, along with a string representation (this'd be the name used to
+refer to it in the fiConfig.yaml file). If the operation is already supported
+for emulation in injectFault.py, then no more changes are needed. Otherwise, 
+you also need to add fault injection functions for the opertion (see D below).
+
+C. Adding a new parameter to the config file
+
+To add a new parameter to the config file, first ensure that the parameter 
+can be expressed using standard YAML syntax (no other format is supported at
+this time). Then add the parameter name to the Fields enum in fiConfig.py, 
+and add the code to read the parameters in the fiConfig's constructor method.
+You may also want to add other methods to the fiConfig class for parsing the 
+parameter value to enable modularity. Finally, it is strongly recommended that
+you come up with a default value of the parameter in case it is not specified,
+and add that to the FiConfig object so that future uses don't result in errors. 
+
+D. Supporting new kinds of TensorFlow operations
+
+To support new kinds of TensorFlow operations is fairly straightforward. You 
+need to add the operation to the opTable in injectFault.py along with a 
+function to actually perform the operation. This function should correspond
+exactly to the format in which Tensorflow would invoke it (i.e., number of
+arguments passed, return type etc.). If not, you'll get a runtime exception.
+
+By convention, please call this function injectFaultOperation, where Operation
+is the name of the Tensorflow operation (feel free to abbreviate it as some
+of the operation names can be rather long). You may want to ensure that it 
+has not already been defined in the table already. As for what the function
+needs to do, take a look at the other injectFault functions and follow their
+template. As a general rule, the numPy library has implemented most of the 
+Tensorflow operations, so you should be able to leverage them in most cases.
+Also, for the actual fault injection, you need to call the condPerturb 
+function with the operation name passed as an argument. So you also need
+to add the operation name to the OPS enum in the fiConfig file if it's not
+already there, along with a string representation of it (see B above). 
+
+E. Supporting new statistics gathering 
+
+We only support simple statistics gathering for the time being - namely
+the number of injections, incorrect outputs, differences etc. If you want
+to add more sophisticated capabilities, you will have to modify the Stats
+enum in the fiStats.py file. Better still, you can create derived classes
+of FiStats and provide your own update methods for the other statistics.
+
+F. Adding new log entries or changing the format of the log file
+
+You can add new fields to be logged to the LogFields Enum of filog.py. 
+You may also want to add corresponding functions to the FILog class
+and call these functions at the appropriate places to do the logging.
+
+To change the log entry format, you can modify getLogEntry method
+of the FILog class in filog.py. You don't need to make any changes to
+this method if all you're doing is adding new fields to the logEntry.
+
+8. CONTRIBUTIONS AND LICENSE
+============================
+
+You are strongly encouraged to contribute code and file bug reports for the 
+tool. Remember it is still under development, so every bit helps. That said, 
+we have released it under a liberal MIT license, so you are not obligated to 
+contribute the code back even if you modify it for your purposes. If you do
+contribute code, be sure to add your name to the CONTRIBUTIONS.txt file.
+
+If you do make changes to it, make sure you can run the test cases in the 
+\tests directory successfully (or add new test cases if you need them). Also,
+please conform to the Python coding guidelines and follow the same indentation
+ as the rest of the code (TODO: write a code style guide sometime).
+
+Finally, if you use TensorFI and find it useful, please cite the TensorFI paper.
+We would also appreciate receiving a quick email on your experience with it.  

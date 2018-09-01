@@ -1,0 +1,4 @@
+# List of contributors to TensorFI: add you name if you contributed
+
+N: Karthik Pattabiraman
+A: Wrote the core code, originated the idea, and the initial version

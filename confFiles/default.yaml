@@ -1,0 +1,26 @@
+# This is a sample YAML file for fault injection configuration
+# The fields here should correspond to the Fields in fiConfig.py
+
+# Deterministic fault seed for the injections
+# Seed: 1000
+
+# Type of fault to be injected for Scalars and Tensors
+# Allowed values are {None, Rand, Zero}
+
+ScalarFaultType: Rand
+TensorFaultType: Rand
+
+# Add the list of Operations and their probabilities here
+# Each entry must be in a separate line ad start with a '-'
+# each line must represent an OP and it's probability value
+# See fiConfig.py for a full list of allowed OP values
+# NOTE: These should not be any tabs anywhere below
+
+Ops:
+#  - ALL = 0.005 # Chooses all operations
+  - ADD = 0.005
+# - DIV = 0.0 # This does not exist - and should be ignored (Test)
+# - SUB = -0.5 # This should raise an exception
+
+# How many times the set of above operations should be skipped before injection
+# SkipCount: 1
