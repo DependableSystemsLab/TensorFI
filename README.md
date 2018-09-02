@@ -45,12 +45,12 @@ In general, any UNIX platform should work. We haven't tested it on Windows thoug
 **2. Installation instructions**
 
 **NOTE**: The easiest way to install TensorFI is to use the
-provided intall.sh script which will install anaconda package
-manager and also the required dependencies, and set the 
+provided intall.sh script which will install the Anaconda package
+manager and also install the required dependencies, and set the 
 appropriate paths. Below, we detail the actions you need to
 take for a manual install if you don't want to use install.sh
 (to use an existing TensorFlow installation, for example), or
-if you have any trouble running the provided install.sh script
+if you have any trouble running it.
 
 A. To install, first install PyYaml v3 and above.
 For example, you would type:
