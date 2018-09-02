@@ -9,7 +9,7 @@ can be easily mapped to the Tensorflow graph. Further, the fault
 injector can be configured though a YAML file. 
 
 *This file constains installation instructions and dependencies. For
-details of how TensorFI works, please refer to the README file*
+details of how TensorFI works, please refer to the Manual file*
 
 **0.Supported/Tested Platforms**
 
