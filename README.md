@@ -117,6 +117,4 @@ are saved under the Tests/Images sub-directory.
 NOTE: Both use the matplotlib and the python-tk libraries
       so you'll need to install the libraries for the demo.
 		
-**Refer to the README file for detailed information**
-
 **If you find TensorFI useful, please cite the following paper: "TensorFI: A configurable fault injector for TensorFlow Applications", Guanpeng Li, Karthik Pattabiraman and Nathan DeBardeleben, 8th IEEE International Workshop on Software Certification (WoSoCER), 2018.**
