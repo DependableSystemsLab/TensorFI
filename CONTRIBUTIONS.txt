@@ -2,3 +2,9 @@
 
 N: Karthik Pattabiraman
 A: Wrote the core code, originated the idea, and the initial version
+
+N: Guanpeng Li
+A: Developed the scripts for the experiments and collected experimental data
+
+N: Zitao Li
+A: Updated the documentation for TensorFI and tested it on different platforms

@@ -111,4 +111,4 @@ NOTE: Both use the matplotlib and the python-tk libraries
 		
 **Refer to the README file for detailed information**
 
-**Questions ? Contact Karthik Pattabiraman (karthikp@ece.ubc.ca)**
+*** If you find TensorFI useful, please cite the following paper: "TensorFI: A configurable fault injector for TensorFlow Applications", Guanpeng Li, Karthik Pattabiraman and Nathan DeBardeleben, 8th IEEE International Workshop on Software Certification (WoSoCER), 2018.**
