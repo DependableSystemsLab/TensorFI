@@ -4,7 +4,7 @@
 
 
 ###
-# Install anaconda3
+# Install anaconda2
 ###
 
 # Change version at https://repo.continuum.io/archive/ if you want
