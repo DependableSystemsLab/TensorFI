@@ -28,7 +28,7 @@
 1. To run all the tests for multiple times, you would type:
 
    ```
-   ./runAllExperimentalTest.sh
+   ./runAllExperiments.sh
    ```
 
    The results (i.e., the accuracy drop after fault injection) are stored under /experimentalTest/accuracyResults/ *separately* for each test (so make sure you have a subfolder named "accuracyResults" under /experimentalTest). You can compare the average accuracy drop in each test for different dataset under /experimentalTest/accuracyResults/ with those in the paper.
