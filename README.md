@@ -1,5 +1,5 @@
 ***TensorFI: A fault injector for TensorFlow applications
- (https://github.com/karthikp-ubc/TensorFI)***
+***
 
 TensorFI is a fault injector for TensorFlow applications written in 
 Python. It instruments the Tensorflow graph to inject faults at the
