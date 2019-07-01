@@ -733,16 +733,6 @@ def injectFaultTanh(a):
 	if logReturn: logging.debug("\tReturning from Tanh " + str(res) )
 	return res
 
-def injectFaultRandomUniform(a):
-	"Function to call injectFault on Random Uniform" 
-	logging.debug("Calling Operator RandomUniform" + getArgs(a)) 
-	resOp = tf.random_uniform(a)
-	with tf.Session() as sess:
-		res = resOp.eval()
-	if logReturn: logging.debug("\tReturning from RandomUniform " + str(res) )
-	return res 
-
-
 def injectFaultLRN(a, bias, alpha, beta):
 	"Function to call injectFault on LRN"
 	logging.debug("Calling Operator LRN" + getArgs(a, bias, alpha, beta)) 
@@ -759,15 +749,15 @@ def injectFaultLRN(a, bias, alpha, beta):
 
 
 def injectFaultELU(a):
-    "Function to call injectFault on ELU"
-    logging.debug("Calling Operator ELU " + getArgs(a))
+	"Function to call injectFault on ELU"
+	logging.debug("Calling Operator ELU " + getArgs(a))
 
-    relu = tf.nn.elu(a)
-    with tf.Session() as sess:
-    	res = relu.eval()
-    res = condPerturb(Ops.ELU, res)
-    if logReturn: logging.debug("\tReturning from ELU " + str(res) )
-    return res
+	relu = tf.nn.elu(a)
+	with tf.Session() as sess:
+		res = relu.eval()
+	res = condPerturb(Ops.ELU, res)
+	if logReturn: logging.debug("\tReturning from ELU " + str(res) )
+	return res
 
 # End of implemented operators
 
@@ -836,6 +826,12 @@ def injectFaultRandomUniformInt(a):
 	logging.debug("Calling Operator RandomUniformInt")
 	raise NotImplementedError("RandomUniformInt")
 
+def injectFaultRandomUniform(a):
+	"Function to call injectFault on Random Uniform"
+	# FIXME: Implement this functionality
+	logging.debug("Calling Operator RandomUniform")
+	raise NotImplementedError("RandomUniform")
+	
 def injectFaultRandomStandardNormal(a):
 	"Function to call injectFault on Random Standard Normal"
 	# FIXME: Implement this functionality
