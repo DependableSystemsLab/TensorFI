@@ -165,23 +165,11 @@ def bitScalar( dtype, val):
 
 def bitTensor ( dtype, val):
 	"Flip one bit in all elements within the tensor"
-	# dimension of tensor value 
-	dim = val.ndim		
-
-	# the value is 1-dimension (i.e., vector)
-	if(dim==1):			
-		col = val.shape[0]
-		for i in range(col):
-			val[i] = randomBitFlip(val[i])
-
-	# the value is 2-dimension (i.e., matrix)
-	elif(dim==2):
-		row = val.shape[0]
-		col = val.shape[1]
-		# flip one bit of each element in the tensor
-		for i in range(row):
-			for j in range(col): 
-				val[i][j] = randomBitFlip(val[i][j]) 
-
+	# flatten the tensor into a vector and then restore the original shape in the end
+	valShape = val.shape
+	val = val.flatten()
+	for i in range(len(val)):
+		val[i] = randomBitFlip(val[i])
+	val = val.reshape(valShape)
 	return dtype.type( val )
 
