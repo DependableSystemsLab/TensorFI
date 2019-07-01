@@ -4,7 +4,7 @@
 
 import numpy as np
 
-# Currently, we support 8 types of faults {None, Rand, Zero, Rand-element, bitFlip-element, bitFlip-tensor} - See fiConfig.py
+# Currently, we support 6 types of faults {None, Rand, Zero, Rand-element, bitFlip-element, bitFlip-tensor} - See fiConfig.py
 
 def randomScalar( dtype, max = 1.0 ):
 	"Return a random value of type dtype from [0, max]"
