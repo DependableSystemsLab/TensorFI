@@ -3,8 +3,7 @@
 
 import tensorflow as tf
 import numpy as np
-import logging
-import conv2d
+import logging 
 from fiConfig import * 
 from fiLog import *
 from threading import current_thread
@@ -770,27 +769,6 @@ def injectFaultELU(a):
     if logReturn: logging.debug("\tReturning from ELU " + str(res) )
     return res
 
-def injectFaultFloor(a):
-	"Function to call injectFault on Floor" 
-	logging.debug("Calling Operator Floor" + getArgs(a))
-
-	resOp = tf.floor(a)
-	sess = tf.Session()
-	res = sess.run(resOp)
-	res = condPerturb(Ops.FLOOR, res)
-	if logReturn: logging.debug("\tReturning from Floor " + str(res) )
-	return res 
-
-def injectFaultSqueeze(a):
-	"Function to call injectFault on Squeee"
-	logging.debug("Calling Operator Squeeze" + getArgs(a))
-
-	resOp = tf.squeeze(a)
-	sess = tf.Session()
-	res = sess.run(resOp)
-	if logReturn: logging.debug("\tReturning from Squeeze " + str(res) )
-	return res
-
 # End of implemented operators
 
 
@@ -1056,7 +1034,19 @@ def injectFaultAssignAdd(a):
 	# FIXME: Implement this functionality
 	logging.debug("Calling Operator AssignAdd")
 	raise NotImplementedError("AssignAdd")
-	
+
+def injectFaultFloor(a):
+	"Function to call injectFault on Floor"
+	# FIXME: Implement this functionality
+	logging.debug("Calling Operator Floor")
+	raise NotImplementedError("Floor")
+
+def injectFaultSqueeze(a):
+	"Function to call injectFault on Squeeze"
+	# FIXME: Implement this functionality
+	logging.debug("Calling Operator Squeeze")
+	raise NotImplementedError("Squeeze")
+
 ##### End of unimplemented functions ###################
 	
 # This is the generic "Catch-all" function - it should be last
