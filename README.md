@@ -11,6 +11,13 @@ injector can be configured though a YAML file.
 *This file constains installation instructions and dependencies. For
 details of how TensorFI works, please refer to the Manual file*
 
+
+***Updates: 2019-06***
+
+We now support fault injection in complex ML models such as LeNet, AlexNet.
+We also support bit-flip injection mode. 
+
+
 **0.Supported/Tested Platforms**
 
 TensorFI has been tested on the following platforms and installations:
