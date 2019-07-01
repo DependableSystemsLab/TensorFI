@@ -23,8 +23,9 @@ TensorFaultType: bitFlip-element
 # NOTE: These should not be any tabs anywhere below
 
 Ops:
-#  - CONV2D = 1.0 # Chooses all operations
-#  - LRN = 1.0
+# Choose operations which you want to inject
+#  - ALL = 1.0 # Chooses all operations
+#  - LRN = 1.0 # Choose one operation only; 
 # - EQUAL = 1.0
 #  - SOFT-MAX = 1.0
 # - DIV = 0.0 # This does not exist - and should be ignored (Test)
