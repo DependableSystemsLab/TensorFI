@@ -354,6 +354,11 @@ need to add the operation to the opTable in injectFault.py along with a
 function to actually perform the operation. This function should correspond
 exactly to the format in which Tensorflow would invoke it (i.e., number of
 arguments passed, return type etc.). If not, you'll get a runtime exception.
+To parse the arguments from the original TensorFlow operations to the FI function,
+you might need to extract necessary attributes from the original operations (in 
+modifyGraph.py where we create the FI function). This is because some attributes 
+(e.g., strides, padding) are contained in the operation's attributes, but not their
+inputs. Otherwsie, some inputs might be missing in the FI function.
 
 By convention, please call this function injectFaultOperation, where Operation
 is the name of the Tensorflow operation (feel free to abbreviate it as some
@@ -362,10 +367,13 @@ has not already been defined in the table already. As for what the function
 needs to do, take a look at the other injectFault functions and follow their
 template. As a general rule, the numPy library has implemented most of the 
 Tensorflow operations, so you should be able to leverage them in most cases.
-Also, for the actual fault injection, you need to call the condPerturb 
-function with the operation name passed as an argument. So you also need
-to add the operation name to the OPS enum in the fiConfig file if it's not
-already there, along with a string representation of it (see B above). 
+Alternatively, you can also use the built-in TensorFlow implementation, e.g.,
+tf.nn.conv2d within the FI function. The TensorFlow graph in the main program will
+not interfere with the one in the injectFault.py module, thus we can leverage the
+TensorFlow implementation. Also, for the actual fault injection, you need 
+to call the condPerturb function with the operation name passed as an argument. 
+So you also need to add the operation name to the OPS enum in the fiConfig file if 
+it's not already there, along with a string representation of it (see B above). 
 
 E. Supporting new statistics gathering 
 
