@@ -65,9 +65,7 @@ class FaultTypes(Enum):
 	ZERO = "Zero"
 	ELEM = "Rand-element"
 	ELEMbit = "bitFlip-element"
-	RANDbit = "bitFlip-tensor"
-	BINA = "binaryBitFlip"
-	SEQU = "sequentialBitFlip"
+	RANDbit = "bitFlip-tensor" 
 # End of FaultTypes
 
 # These are the list of supported Fields below (if you add a new Field, please add it here)
@@ -163,7 +161,7 @@ class FIConfig(object):
 
 
 	def __str__(self):
-		"Convert this object to a astring representation for printing"
+		"Convert this object to a string representation for printing"
 		res = [ "FIConfig: {" ]
 		res.append("\tfaultTypeScalar : " + str(self.faultTypeScalar) )
 		res.append("\tfaultTypeTensor : " + str(self.faultTypeTensor) )
