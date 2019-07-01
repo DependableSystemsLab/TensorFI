@@ -54,6 +54,8 @@ class Ops(Enum):
 	UNPACK = "UNPACK"
 	ALL = "ALL"	# Chooses all the operations for injection (end of list)
 	END = "END"  # Dummy operation for end of list
+	LRN = "LRN" 
+	ELU = "ELU"
 # End of Ops
 
 # These are the list of supported Fault types below (if you add a new type, please add it here)
@@ -61,6 +63,9 @@ class FaultTypes(Enum):
 	NONE = "None"
 	RAND = "Rand"
 	ZERO = "Zero"
+	ELEM = "Rand-element"
+	ELEMbit = "bitFlip-element"
+	RANDbit = "bitFlip-tensor" 
 # End of FaultTypes
 
 # These are the list of supported Fields below (if you add a new Field, please add it here)
@@ -70,6 +75,8 @@ class Fields(Enum):
 	Ops = "Ops"
 	Seed = "Seed"
 	SkipCount = "SkipCount"
+	Instances = "Instances"
+	InjectMode = "InjectMode"
 # End of Fields
 
 # These are the fault configuration functions
@@ -81,7 +88,10 @@ class FIConfig(object):
 	faultTypeMap = { 
 		FaultTypes.NONE.value : (noScalar, noTensor),
 		FaultTypes.RAND.value : (randomScalar, randomTensor),
-		FaultTypes.ZERO.value : (zeroScalar, zeroTensor)
+		FaultTypes.ZERO.value : (zeroScalar, zeroTensor),
+		FaultTypes.ELEM.value : (randomElementScalar, randomElementTensor),
+		FaultTypes.ELEMbit.value : (bitElementScalar, bitElementTensor),
+		FaultTypes.RANDbit.value : (bitScalar, bitTensor)
 	}
 
 	def faultConfigType(self, faultTypeScalar, faultTypeTensor):
@@ -95,10 +105,10 @@ class FIConfig(object):
 			# If it's not known, declare an error
 			raise ValueError("Unknown fault type " + str(faultTypeScalar))
 
-		# Check if the fault type is known and if so, assign the tensor functions 
+		# Check if the fault type is known and if so, assign the tensor functions  
 		if self.faultTypeMap.has_key(faultTypeTensor):
 			self.faultTypeTensor = faultTypeTensor
-			self.injectTensor = self.faultTypeMap[ faultTypeTensor ][1]
+			self.injectTensor = self.faultTypeMap[ faultTypeTensor ][1]  
 		else:
 			# If it's not known, declare an error
 			raise ValueError("Unknown fault type " + str(faultTypeTensor))
@@ -118,6 +128,19 @@ class FIConfig(object):
 				# Finally, add the operation to the injectMap
 				self.injectMap[ op ] = probFP
 
+	def instanceConfigOp(self, opType, instance):
+		"Configure the instance of each operations"
+		# Check if it's a defined operation, and if so, add it to the opInstance
+		for op in Ops:
+			if op.value == opType:
+				# Check if the instance is a sane value
+				if (instance <= 0):
+					raise ValueError("Instance has to be larger than 0")
+
+				# Finally, add the operation to the injectMap
+				self.opInstance[ op ] = int(instance)
+
+
 	def isSelected(self, op):
 		"Check if the op is among those selected for injection"
 		# Either all operations are selected or this particular one is selected
@@ -131,6 +154,10 @@ class FIConfig(object):
 			return self.injectMap[ op ]
 		else:
 			return self.injectMap[ Ops.ALL ]
+
+ 	def getInstance (self, op):
+ 		"Retreive the instance of the op for injection if it's present"
+		return self.opInstance[ op ] 			
 
 
 	def __str__(self):
@@ -150,27 +177,49 @@ class FIConfig(object):
 		# Default value of fault is NoFault
 		if fiParams.has_key(Fields.ScalarFaultType.value):
 			faultTypeScalar = fiParams[Fields.ScalarFaultType.value]
-		else:
+		else:	
 			faultTypeScalar = "None"	
 		# Next configure the Tensor fault type
 		# Default value of fault is NoFault
 		if fiParams.has_key(Fields.TensorFaultType.value):
-			faultTypeTensor = fiParams[Fields.TensorFaultType.value]
+			faultTypeTensor = str(fiParams[Fields.TensorFaultType.value])
 		else:
 			faultTypeTensor = "None"
 		
+		self.injectMode = ""
+		if fiParams.has_key(Fields.InjectMode.value):
+			self.injectMode = str(fiParams[Fields.InjectMode.value]) 
+		else:
+			# in this case, there will be no injection
+			self.injectMode = "None"
+
 		# Finally, call the faultConfigtype function with the parameters	
 		self.faultConfigType(faultTypeScalar, faultTypeTensor)
 	
 		# Configure the operations to be included for instrumenting
 		# default value is inject nothing (empty op list)
 		self.injectMap = { }
+
 		if fiParams.has_key(Fields.Ops.value):
 			opsList = fiParams[Fields.Ops.value]
 			if not opsList==None:
 				for element in opsList:
 					(opType, prob) = element.split('=')
 					self.faultConfigOp(opType.rstrip(), prob.lstrip())
+
+		# Configure the instances of each operation 
+		self.opInstance = { }
+		# Configure the amount of total instance of the algorithm, i.e., number of operations in the model
+		self.totalInstance = 0
+
+		if fiParams.has_key(Fields.Instances.value):
+			instanceList = fiParams[Fields.Instances.value]
+			if not instanceList==None:
+				for element in instanceList:
+					(opType, instance) = element.split('=')
+					self.instanceConfigOp(opType.rstrip(), instance.lstrip())
+					self.totalInstance += int(instance.lstrip())
+
 
 		# Confligre the seed value if one is specified
 		# default value is none (so it's non-deterministic)

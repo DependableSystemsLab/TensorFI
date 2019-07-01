@@ -3,6 +3,7 @@
 import tensorflow as tf
 import printGraph as pg
 import injectFault
+import numpy as np
 
 def createFIFunc(opType, inputs, outputTypes, name):
 	"Create a tensorflow operation representing a fault injection node"
@@ -31,6 +32,7 @@ def createFIFunc(opType, inputs, outputTypes, name):
 
 	# Create a new TensorFlow operator with the corresponding fault injection function
 	res = tf.py_func(fiFunc, inputs, outputTypes, name = name) 
+
 	#print "NewOp = ", res
 
 	return res
@@ -39,8 +41,9 @@ def createFIFunc(opType, inputs, outputTypes, name):
 def modifyNodes(g, prefix):
 	"Insert nodes in the graph for fault injection corresponding to the original nodes"
 	ops = g.get_operations()
-	
+
 	fiMap = {} # Keeps track of the mapping between the FI node inserted and the original ones
+
 
 	# Iterate over all the nodes in the TensorFlow graph
 	for op in ops:
@@ -51,12 +54,27 @@ def modifyNodes(g, prefix):
 			if fiMap.has_key(input): 
 				input = fiMap[input]
 			inputs.append(input)
+		 
+		# important attributes (e.g., strides) will be used as as the input of the tensor as well
+		# Please check if the Op you want to inject has these attributes, if any, you should provide these to the customized Op for injection as well
+		if(op.type=="Conv2D"):  
+			inputs.append( (op.node_def.attr['strides'].list.i[:])  )
+			inputs.append( str(op.node_def.attr['padding'].s)  )  
+		elif(  op.type=="LRN" ):
+			inputs.append( float(op.node_def.attr['bias'].f) )
+			inputs.append( float(op.node_def.attr['alpha'].f) )
+			inputs.append( float(op.node_def.attr['beta'].f) ) 
+		elif(  op.type == "MaxPool"): 
+			inputs.append( np.asarray(op.node_def.attr['ksize'].list.i[:]) )
+			inputs.append( np.asarray(op.node_def.attr['strides'].list.i[:]) )
+			inputs.append( str(op.node_def.attr['padding'].s) ) 
+				
 
 		# Create a new operation by wrapping debugPrint function and setting its inputs to op.inputs
 		# Do this while preserving the control dependendencies of the original
 		with g.control_dependencies(op.control_inputs):
 			name = prefix + op.name
-			
+
 			# Create fault injection equivalents for everything except {Placeholder, Variable, Constant}
 			if not op.type=="Placeholder" and not op.type.startswith("Variable") and not op.type=="Const":
 

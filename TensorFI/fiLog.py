@@ -15,6 +15,8 @@ class Log(Enum):
 	Original = "Original"
 	Injected = "Injected"
 	TimeStamp = "Time"
+	Instance = "Instance"
+	TotalInstance = "TotalInstance"
 # End of LogEntries Enum
 
 class FILog:
@@ -65,6 +67,14 @@ class FILog:
 	def updateRunCount(self, runCount):
 		"Update the overall runCount"
 		self.logEntry[Log.RunCount] = runCount
+
+	def updateInjectedInstance(self, instance, totalInstance):
+		"Update the instance to be injected"
+		"Note that the instance may vary based on the injection mode chosen"
+		"In the 2nd injection mode: the instance is based on the overall instance of current op"
+		"In the 3rd injection mode: in the isntance is based on the ALL the op in the algorithm"
+		self.logEntry[Log.Instance] = instance
+		self.logEntry[Log.TotalInstance] = totalInstance
 
 	def getLogEntry(self):
 		"Get a string representation of the log entry"

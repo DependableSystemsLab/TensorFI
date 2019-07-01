@@ -1,4 +1,4 @@
-***The following documentation details how to run the experiments and reproduce the results in the TensorFI paper***
+   ***The following documentation details how to run the experiments and reproduce the results in the TensorFI paper***
 
 **0. How to run the experiments**
 
@@ -28,7 +28,7 @@
 1. To run all the tests for multiple times, you would type:
 
    ```
-   ./runAllExperiments.sh
+   ./runAllExperimentalTest.sh
    ```
 
    The results (i.e., the accuracy drop after fault injection) are stored under /experimentalTest/accuracyResults/ *separately* for each test (so make sure you have a subfolder named "accuracyResults" under /experimentalTest). You can compare the average accuracy drop in each test for different dataset under /experimentalTest/accuracyResults/ with those in the paper.
@@ -48,5 +48,21 @@
    ```
 
    There is 1 arg to specify: 1) the path for the file to log the result of accuracy drop.
+   
+   
+***Below is a general approach on how to run the experiment on a ML program after the successful installation of TensorFI***
+
+   
+1. Insert the following statement AFTER the training phase and BEFORE the inference phase in your main ML program (TensorFI is intended for fault injection in the inference phase). See the test examples in /experimentalTest for more details.
+
+   ```
+   fi = ti.TensorFI(tf.Session(), logLevel = 50, name = "convolutional", disableInjections=False)
+   ```
+   
+   You can configure the parameters accordingly.
+
+2. Follow the instruction to configure the configuration file. By default, it's in the /confFiles/default.yaml file (including the instructions).
+
+
 
 **Questions ? Contact Karthik Pattabiraman (karthikp@ece.ubc.ca)**
