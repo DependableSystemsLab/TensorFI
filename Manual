@@ -27,9 +27,7 @@ injected fault and the effect of the fault on the machine learning algorithm.
 1. Faults can only be injected during testing, not training
 2. We only support multi-threaded fault injections, not multi-process
 3. We assue there's only one main graph per TensorFlow session
-4. Many standard neural network (NN) operators such as MaxPool have either
-not been implemented, or have bugs. So complex NN's aren't supported
-5. There's a race condition in logging the run count for multithreaded
+4. There's a race condition in logging the run count for multithreaded
 injections due to TensorFlow's spawning of internal threads.
 
 3. DIRECTORY STRUCTURE:
