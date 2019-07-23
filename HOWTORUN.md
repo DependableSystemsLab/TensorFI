@@ -63,6 +63,8 @@
 
 2. Follow the instruction to configure the configuration file. By default, it's in the /confFiles/default.yaml file (including the instructions).
 
+3. Run the program and you can observe the output of the ML model under fault.
+
 
 
 **Questions ? Contact Karthik Pattabiraman (karthikp@ece.ubc.ca)**
