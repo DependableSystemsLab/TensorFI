@@ -37,6 +37,10 @@ from six.moves import xrange  # pylint: disable=redefined-builtin
 import tensorflow as tf
 import TensorFI as ti
 
+os.environ["CUDA_VISIBLE_DEVICES"]="-1"  
+
+
+
 SOURCE_URL = 'http://yann.lecun.com/exdb/mnist/'
 WORK_DIRECTORY = 'data'
 IMAGE_SIZE = 28
@@ -46,7 +50,7 @@ NUM_LABELS = 10
 VALIDATION_SIZE = 500  # Size of the validation set.
 SEED = 66478  # Set to None for random seed.
 BATCH_SIZE = 64
-NUM_EPOCHS = 10
+NUM_EPOCHS = 100
 
 "set to the same size of the test dataset"
 eval_per_batch = 1
@@ -149,10 +153,10 @@ def main(_):
     test_labels_filename = maybe_download('t10k-labels-idx1-ubyte.gz')
 
     # Extract it into numpy arrays.
-    train_data = extract_data(train_data_filename, 10000)
-    train_labels = extract_labels(train_labels_filename, 10000)
+    train_data = extract_data(train_data_filename, 50000)
+    train_labels = extract_labels(train_labels_filename, 50000)
 
-    test_batch = 1
+    test_batch = 100
     test_data = extract_data(test_data_filename, test_batch)
     test_labels = extract_labels(test_labels_filename, test_batch) 
 
@@ -183,21 +187,21 @@ def main(_):
 
 
 
-  depth1 = 2
+  depth1 = 32
   conv1_weights = tf.Variable(
                               tf.truncated_normal([5, 5, NUM_CHANNELS, depth1],  # 5x5 filter, depth 32.
                                                   stddev=0.1,
                                                   seed=SEED, dtype=data_type()))
   conv1_biases = tf.Variable(tf.zeros([depth1], dtype=data_type()))
 
-  depth2 = 2
+  depth2 = 64
   conv2_weights = tf.Variable(
                               tf.truncated_normal([5, 5, depth1, depth2], stddev=0.1,
                               seed=SEED, dtype=data_type()))
   conv2_biases = tf.Variable(tf.constant(0.1, shape=[depth2], dtype=data_type()))
   
 
-  depth3 = 32
+  depth3 = 512
   fc1_weights = tf.Variable(  # fully connected, depth 512.
                             tf.truncated_normal([IMAGE_SIZE // 4 * IMAGE_SIZE // 4 * depth2, depth3],
                                                 stddev=0.1,
@@ -340,7 +344,7 @@ def main(_):
       # Run the optimizer to update weights. 
 
       sess.run(optimizer, feed_dict=feed_dict)
-      '''
+      
       # print some extra information once reach the evaluation frequency
       if step % EVAL_FREQUENCY == 0:
         # fetch some extra nodes' data
@@ -352,11 +356,14 @@ def main(_):
               (step, float(step) * BATCH_SIZE / train_size,
                1000 * elapsed_time / EVAL_FREQUENCY))
         print('Minibatch loss: %.3f, learning rate: %.6f' % (l, lr))
-        print('Minibatch error: %.1f%%' % error_rate(predictions, batch_labels))
-        print('Validation error: %.1f%%' % error_rate(
-            eval_in_batches(validation_data, sess), validation_labels))
+        errRate, _ = error_rate(predictions, batch_labels)
+        print('Minibatch error: %.1f%%' % errRate )
+#        errRate, _ = error_rate(
+#            eval_in_batches(validation_data, sess), validation_labels)
+#        print('Validation error: %.1f%%' % errRate)
+
         sys.stdout.flush()
-        '''
+        
 
 
     # Finally print the result!  
@@ -379,9 +386,6 @@ def main(_):
     # Add the fault injection nodes to it
     fi = ti.TensorFI(sess, logLevel = 50, name = "convolutional", disableInjections=False)
 
-    test_error, indexOfCorrectSample = error_rate(eval_in_batches(test_data, sess), test_labels, True)
-    print('Test error: %.1f%%' % test_error)
-
     # inject ten inputs
     for i in range(10):
       each = indexOfCorrectSample[i]  # index of the sample to be injected
@@ -389,7 +393,7 @@ def main(_):
       newLab = ( test_labels[each].reshape(1) )
 
 
-      fiCount = 1
+      fiCount = 100   # number of FI
       sdcCount = 0.
       for j in range(fiCount):
         test_error, _ = error_rate(eval_in_batches(newData, sess), newLab, True) 

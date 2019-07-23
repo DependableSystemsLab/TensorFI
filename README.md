@@ -14,7 +14,7 @@ details of how TensorFI works, please refer to the Manual file*
 
 ***Updates: 2019-07***
 
-We now support fault injection in complex ML models such as LeNet, AlexNet, as well as support for single bit-flip injection mode. Some DNN models are provided in /Tests directory.
+We now support fault injection in complex ML models such as LeNet, AlexNet, as well as support for single bit-flip injection mode. Some DNN models are provided in /Tests directory. For starter, you can try running the LeNet.py under /Tests/DNN-model/LeNet-mnist/ to inject faults in a CNN (it'll automatically download the dataset and the config file is set up).
 
 You can now create your customized TensorFlow operations for injection, by using the built-in TensorFlow implementation, to support injection on new ML models. See the *Manual* for more details. 
 

@@ -1,4 +1,4 @@
-# Autopilot-TensorFlow
+# Autopilot-TensorFlow (copy from https://github.com/SullyChen/Autopilot-TensorFlow)
 A TensorFlow implementation of this [Nvidia paper](https://arxiv.org/pdf/1604.07316.pdf) with some changes. For a summary of the design process and FAQs, see [this medium article I wrote](https://medium.com/@sullyfchen/how-a-high-school-junior-made-a-self-driving-car-705fa9b6e860).
 
 # IMPORTANT

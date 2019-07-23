@@ -1,0 +1,60 @@
+# This is a sample YAML file for fault injection configuration
+# The fields here should correspond to the Fields in fiConfig.py
+
+# Deterministic fault seed for the injections
+# Seed: 1000
+
+# Type of fault to be injected for Scalars and Tensors
+# Allowed values are: {None, Rand, Zero, Rand-element, bitFlip-element, bitFlip-tensor}
+#   1) None - do not inject fault
+#   2) Rand - shuffle all the data items in the output of the target op into random values
+#   3) Zero - change the value into all zeros
+#   4) Rand-element - shuffle one of the data item in the output of the target op into random value
+#   5) bitFlip-element - single bit-flip over one data item in the output of the target op
+#   6) bitFlip-tensor - single bit-flip over all data items in the output of the target op 
+ScalarFaultType: None
+TensorFaultType: bitFlip-element 
+#TensorFaultType: None
+
+# Add the list of Operations and their probabilities here
+# Each entry must be in a separate line ad start with a '-'
+# each line must represent an OP and it's probability value
+# See fiConfig.py for a full list of allowed OP values
+# NOTE: These should not be any tabs anywhere below
+
+Ops:
+# Choose operations which you want to inject
+  - ALL = 1.0 # Chooses all operations
+#  - LRN = 1.0 # Choose one operation only; 
+# - EQUAL = 1.0
+#  - SOFT-MAX = 1.0
+# - DIV = 0.0 # This does not exist - and should be ignored (Test)
+# - SUB = -0.5 # This should raise an exception
+
+# How many times the set of above operations should be skipped before injection
+# SkipCount: 1
+
+
+# Specify the instances of the ML operators 
+# This is required when you want to specify which operator to inject (e.g., the second Conv operator).
+# Below is an example, you need to specify the numbers according to your model.
+Instances: 
+  - CONV2D = 2   # This means there are two conv2d operations in the model
+  - MAX-POOL = 2
+  - RELU = 3
+  - BIASADD = 2
+  - RESHAPE = 1
+  - ADD = 3
+  - MATMUL = 3 
+
+
+
+# There are three inject mode:
+# There are 3 ways to determine HOW to select an operation for injection"
+# 1) Using error rate to determine the probability of each opertaor to be injected " 
+# 2) Profiling the instance of each operation so that each operation will be injected for ONCE only" 
+# 3) Perform random injection over one op per run". In this mode, the 'ALL' variable in the Ops section must be used explicitly. 
+# In the second and third mode, you'll need to specify the instances of all the operators in the algorithm
+
+# Allowed values: 1) "errorRate"; 2) "dynamicInstance"; 3) "oneFaultPerRun" 
+InjectMode: "errorRate"

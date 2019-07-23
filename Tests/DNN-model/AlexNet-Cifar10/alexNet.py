@@ -267,7 +267,7 @@ def test_and_save(_global_step, epoch):
     print("###########################################################################################################")
 
 
-# train the model
+# Prepreation for training, e.g., setting optimizer
 if(isTrain):
     tf.set_random_seed(21)
 
@@ -307,7 +307,7 @@ if(isTrain):
     train_writer = tf.summary.FileWriter(_SAVE_PATH, sess.graph)
     init = tf.initialize_all_variables()
     sess.run(init)
-
+# Prepreation for testing, e.g., restoring the trained model
 elif(isTest):
     test_x, test_y = get_data_set("test")
     x, y, output, y_pred_cls, global_step, learning_rate = model()
