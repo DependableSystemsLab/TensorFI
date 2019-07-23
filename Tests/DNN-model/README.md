@@ -2,7 +2,7 @@
 
 - This directory contains 6 different DNN models, e.g., steering model in self-driving cars.
 - The benchmarks and datasets are as follows (link to download the dataset): 
-    - LeNet-4 - Mnist dataset (http://yann.lecun.com/exdb/mnist/)
+    - LeNet-4 - Mnist dataset (http://yann.lecun.com/exdb/mnist/). You can directly run this test (it will automatically download the dataset) to try injecting bit-flip in all of the operators. 
     - AlexNet - Cifar-10 (https://www.cs.toronto.edu/~kriz/cifar.html)
     - VGG16 - ImageNet (http://image-net.org/download)
     - VGG11 - German traffic sign (http://benchmark.ini.rub.de/?section=gtsrb&subsection=dataset)
