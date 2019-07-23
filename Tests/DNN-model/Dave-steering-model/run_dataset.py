@@ -22,11 +22,12 @@ eachFI = open("eachInjtionRes.csv", "a")
 fi = ti.TensorFI(sess, logLevel = 50, name = "convolutional", disableInjections=True)
 
 
-i = 140
+imgIndex = 140
 #while(cv2.waitKey(10) != ord('q')):
 
-for j in range(1):
-    full_image = scipy.misc.imread("driving_dataset/" + str(i) + ".jpg", mode="RGB")
+
+for i in range(1):  # num of imgs to be injected
+    full_image = scipy.misc.imread("driving_dataset/" + str(imgIndex) + ".jpg", mode="RGB")
     image = scipy.misc.imresize(full_image[-150:], [66, 200]) / 255.0
 
     '''    
@@ -52,13 +53,14 @@ for j in range(1):
 
 
 
-    fi.turnOnInjections()
-    ti.faultTypes.sequentialFIinit()
+    fi.turnOnInjections() 
 
     totalFI = 0.
     sdcCount = 0 
-#    for k in range(3100):
-    while(ti.faultTypes.isKeepDoingFI):
+
+    fiCount = 100
+    for k in range(fiCount): 
+        # steering angle under fault
         degrees = model.y.eval(feed_dict={model.x: [image], model.keep_prob: 1.0})[0][0] * 180.0 / scipy.pi 
 
         totalFI += 1
@@ -88,6 +90,5 @@ for j in range(1):
 #        dst = cv2.warpAffine(img,M,(cols,rows))
 #        cv2.imshow("steering wheel", dst)
         
-    i += 1 
     
 cv2.destroyAllWindows()
