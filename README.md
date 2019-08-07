@@ -52,6 +52,14 @@ In general, any UNIX platform should work. We haven't tested it on Windows thoug
 
 **2. Installation instructions**
 
+**NEW**: We now provide TensorFI in a pypi package, so that you can install TensorFI using pip:
+
+```
+pip install TensorFI
+```
+
+In this way, TensorFI will be installed into the existing python environment. Alternatively, you can install TensorFI in  virutal environment (see below).
+
 **NOTE**: The easiest way to install TensorFI is to use the
 provided intall.sh script which will install the Anaconda package
 manager and also install the required dependencies, and set the 
