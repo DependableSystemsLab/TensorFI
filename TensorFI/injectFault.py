@@ -1166,9 +1166,9 @@ opTable = {
 			"L2Loss" : injectFaultL2Loss,
 			"ApplyMomentum" : injectFaultApplyMomentum,
 			"AssignAdd" : injectFaultAssignAdd,
-			"Unknown": injectFaultGeneric,		# Last operation
-			# "Unknown": None			# For debugging purposes
 			"LRN" : injectFaultLRN,
-			"Elu" : injectFaultELU
+			"Elu" : injectFaultELU,
+			"Unknown": injectFaultGeneric		# Last operation
+			# "Unknown": None			# For debugging purposes
 		}	
 
