@@ -23,7 +23,7 @@ res1 = s.run([ node3 ])
 print("res1 = ", res1)
 
 # Instrument the FI session 
-fi = ti.TensorFI(s, logLevel = 50)
+fi = ti.TensorFI(s, logLevel = 100)
 
 # Create a log for visualizng in TensorBoard
 logs_path = "./logs"
