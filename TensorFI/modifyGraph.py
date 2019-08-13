@@ -38,6 +38,16 @@ def createFIFunc(opType, inputs, outputTypes, name):
 	return res
 # Done with createFIFunc
 
+# Create fault injection equivalents for everything except {Placeholder, Variable, Constant}
+def excludeOps(op):
+        "Which operations to exclude from the instrumentation"
+        result = False
+        result = result or op.type=="Placeholder"
+        result = result or op.type.startswith("Variable") 
+        result = result or op.type=="Const"
+        return result
+# Done with excludeOps
+
 def modifyNodes(g, prefix):
 	"Insert nodes in the graph for fault injection corresponding to the original nodes"
 	ops = g.get_operations()
@@ -75,8 +85,8 @@ def modifyNodes(g, prefix):
 		with g.control_dependencies(op.control_inputs):
 			name = prefix + op.name
 
-			# Create fault injection equivalents for everything except {Placeholder, Variable, Constant}
-			if not op.type=="Placeholder" and not op.type.startswith("Variable") and not op.type=="Const":
+		        # If operation is not one of the excluded operations for fault injections
+                        if not excludeOps(op):	
 
 				# Find the output types of all the outputs of op	 		
 				outputTypeList = []
