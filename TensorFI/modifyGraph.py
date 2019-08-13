@@ -7,7 +7,7 @@ import numpy as np
 
 def createFIFunc(opType, inputs, outputTypes, name):
 	"Create a tensorflow operation representing a fault injection node"
-	# print "Creating FIfunc with ", opType, inputs, outputTypes, name
+	# print "\nCreating FIfunc with ", opType, inputs, outputTypes, name
 
 	fiFunc = None
 
@@ -37,6 +37,17 @@ def createFIFunc(opType, inputs, outputTypes, name):
 
 	return res
 # Done with createFIFunc
+
+# Create fault injection equivalents for everything except {Placeholder, Variable, Constant, NoOp}
+def excludeOps(op):
+        "Which operations to exclude from the instrumentation"
+        result = False
+        result = result or op.type=="Placeholder"
+        result = result or op.type.startswith("Variable") 
+        result = result or op.type=="Const"
+        result = result or op.type=="NoOp"
+        return result
+# Done with excludeOps
 
 def modifyNodes(g, prefix):
 	"Insert nodes in the graph for fault injection corresponding to the original nodes"
@@ -75,8 +86,8 @@ def modifyNodes(g, prefix):
 		with g.control_dependencies(op.control_inputs):
 			name = prefix + op.name
 
-			# Create fault injection equivalents for everything except {Placeholder, Variable, Constant}
-			if not op.type=="Placeholder" and not op.type.startswith("Variable") and not op.type=="Const":
+		        # If operation is not one of the excluded operations for fault injections
+                        if not excludeOps(op):	
 
 				# Find the output types of all the outputs of op	 		
 				outputTypeList = []
