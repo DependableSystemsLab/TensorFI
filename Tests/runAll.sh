@@ -71,7 +71,8 @@ else
 fi  
 
 # Add any tests that should be executed here
-Tests=( "constant" 
+Tests=( "noop"
+        "constant" 
 	"variables" 
 	"placeholder" 
 	"loss" 
