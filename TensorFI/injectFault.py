@@ -207,7 +207,7 @@ def condPerturb(op, res):
 				if (not randInstanceMap.has_key(op)): 
 					# random instance of the selected op to be injected
 					randInstanceMap[op] = np.random.randint(low=1, high=instance+1)	
-					faultLog.updateInjectedInstance(randInstanceMap[op], instance)
+				faultLog.updateInjectedInstance(randInstanceMap[op], instance)
 				
 				# first instance of the op
 				if(not visitedOp.has_key(op)):	visitedOp[op] = 1	
@@ -235,7 +235,7 @@ def condPerturb(op, res):
 				# select one random op to be injected in the whole run
 				if(injectedOp == 0):
 					injectedOp = np.random.randint(low=1, high=totalInstance+1) 
-					faultLog.updateInjectedInstance(injectedOp, totalInstance)
+				faultLog.updateInjectedInstance(injectedOp, totalInstance)
 				# inject fault at the output of the operation
 				if(totalVistedOp == injectedOp):
 					res = perturb(res)
