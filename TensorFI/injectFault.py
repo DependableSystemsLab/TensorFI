@@ -15,9 +15,9 @@ from sklearn.utils.extmath import softmax
 # global variable to determine fine grained levels of logging
 # WARNING: Setting these to True may generate a lot of log data
 
-logReturn = False	# log return values of functions	
+logReturn = True	# log return values of functions	
 logArgs = True		# log arguments of operators
-logInjection = False	# log fault injection and checking
+logInjection = True	# log fault injection and checking
 
 # This is the initialization function for the config file 
 # and is called from TensorFI.py's constructor
