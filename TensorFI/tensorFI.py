@@ -174,12 +174,13 @@ class TensorFI:
 		self.name = name
 
 		# Setup the logging level for debug messages
-		logging.basicConfig(level=logLevel)
-                logging.debug("Done setting logLevel to ", self.getLogLevel())
+		logging.basicConfig()
+                self.setLogLevel(logLevel)
+                logging.debug("Done setting logLevel to " + str(self.getLogLevel()) )
 	
 		# Read the config file parameters from the configuration file
 		# If the configFileName is None, it'll use defalt parameters
-		logging.info("Initializing injector")
+		logging.info("Initializing the injector")
 		fiParams = configFaultParams(configFileName)
 	
 		# Modify the entire graph to insert the FI nodes - store in fiMap
