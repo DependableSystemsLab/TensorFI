@@ -145,6 +145,17 @@ class TensorFI:
 		logging.info("Turning on injections")
 		self.noInjections = False
 
+        # Functions to get and set the logging level - cn be called externally
+
+        def getLogLevel(self):
+                "Return the current logging level"
+                return logging.getLogger().getEffectiveLevel()
+
+        def setLogLevel(self, level):
+                "Set the current log level"
+                # Assume that logging.basicConfig has been called already
+                logging.getLogger().setLevel(level)
+
 	# This is the externally callable "constructor" function  
 	# to instrument a session and monkey patch its run function
 	# Optionally takes a fault config file, and DEBUG level as arguments
@@ -153,7 +164,7 @@ class TensorFI:
 	def __init__(self, s,	# This is the session from tensorFlow 
 			configFileName = "confFiles/default.yaml",	# Config file for reading fault configuration 
 			logDir = "faultLogs/",				# Log directory for the Fault log (Not to be confused with the logging level below)
-			logLevel = logging.ERROR,			# Logging level {DEBUG=10, INFO=20, ERROR=30}
+			logLevel = logging.DEBUG,			# Logging level {DEBUG=10, INFO=20, ERROR=30}
 			disableInjections = False,			# Should we disable injections after instrumenting ?
 			name = "NoName", 				# The name of the injector, used in statistics and logging
 			fiPrefix = "fi_"):				# Prefix to attach to each node inserted for fault injection
@@ -164,6 +175,7 @@ class TensorFI:
 
 		# Setup the logging level for debug messages
 		logging.basicConfig(level=logLevel)
+                logging.debug("Done setting logLevel to ", self.getLogLevel())
 	
 		# Read the config file parameters from the configuration file
 		# If the configFileName is None, it'll use defalt parameters
