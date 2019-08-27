@@ -59,7 +59,7 @@ with sess.as_default():
 print("Done running model");
 
 # Instrument the graph with TensorFI
-fi = ti.TensorFI(sess, configFileName="confFiles/test.yaml", logLevel = 100)
+fi = ti.TensorFI(sess, logLevel = 100)
 fi.turnOnInjections();
 with sess.as_default():
     print( "Accuracy = ",  acc_value.eval(feed_dict={img: mnist_data.test.images,
