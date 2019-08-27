@@ -171,7 +171,7 @@ with tf.Session() as sess:
 
     # Instrument the graph for fault injection
     # But don't inject faults while we're doing the correct run	
-    fi = ti.TensorFI( sess, disableInjections = True, logLevel = 10 )
+    fi = ti.TensorFI( sess, disableInjections = True, logLevel = 50 )
   
     # Create a log for visualizng in TensorBoard (during training) 
     logs_path = "./logs"
