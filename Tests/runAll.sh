@@ -68,7 +68,10 @@ if [[ $(timeout --version | wc -c) -eq 0 ]]; then
 	TIMEOUT=""
 else
 	TIMEOUT="timeout $TIMEOUT_VAL"
-fi  
+fi 
+
+# Suppress TensorFlow warning messages
+export TF_CPP_MIN_LOG_LEVEL=1
 
 # Add any tests that should be executed here
 Tests=( "noop"
@@ -81,6 +84,7 @@ Tests=( "noop"
 	"logistic_regression" 
 	"nearest_neighbor" 
 	"mnist_softmax" 
+	"keras-mnist"
 	"neural_network_raw" 
 )
 
