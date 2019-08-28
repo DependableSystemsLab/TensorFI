@@ -18,6 +18,8 @@ We now support fault injection in complex ML models such as LeNet, AlexNet, as w
 
 You can now create your customized TensorFlow operations for injection, by using the built-in TensorFlow implementation, to support injection on new ML models. See the *Manual* for more details. 
 
+*Using TF Keras*: A simple MLP model implemented using TF Keras module is created and tested with TensorFI. Try it at /Test/keras-mnist.py
+
 
 **0.Supported/Tested Platforms**
 
