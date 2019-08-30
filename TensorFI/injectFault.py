@@ -454,7 +454,7 @@ def injectFaultReshape(a, b):
 	"Function to call injectFault on Reshape"
 	logging.debug("Calling Operator Reshape " + getArgs(a, b))
 	res = np.reshape(a, b)
-	res = condPerturb(Ops.RESHAPE, res) 
+        res = condPerturb(Ops.RESHAPE, res) 
 	if logReturn: logging.debug("\tReturning from Reshape " + str(res) )
 	return res
 
@@ -574,8 +574,11 @@ def injectFaultUnstack(a):
 def injectFaultStridedSlice(a, b, c, d):
 	"Function to call injectFault on StridedSlice"
 	logging.debug("Calling Operator StridedSlice " + getArgs(a))
-	# FIXME: Implement this functionality
-	res = a
+	# FIXME: Implement this functionality with just numpy
+        # res = a	
+        resOp = tf.strided_slice(a, b, c, d)
+	with tf.Session() as sess:
+		res = resOp.eval()
 	res = condPerturb(Ops.STRIDEDSLICE, res)
 	if logReturn: logging.debug("\tReturning from StridedSlice " + str(res) )
 	return res
@@ -590,11 +593,9 @@ def injectFaultExpandDims(a, b):
 
 def injectFaultPack(a, b):
 	"Function to call injectFault on Pack"
-	# FIXME: Implement this functionality
 	logging.debug("Calling Operator Pack" + getArgs(a, b))
-	# res = np.stack(a, b)
-	# FIXME: This throws an exception, so we dummied it out
-	res = a
+	res = np.stack(a, b)
+	# FIXME: This throws an exception sometimes (no idea why)
 	res = condPerturb(Ops.PACK, res)
 	if logReturn: logging.debug("\tReturning " + str(res) )
 	return res
