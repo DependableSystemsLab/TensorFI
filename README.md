@@ -70,12 +70,23 @@ In this way, TensorFI will be installed into the existing python environment.
 Alternatively, you can install TensorFI in a virutal environment as outlined
 below.
 
-### Using the install.sh script
+### Using the install Bash scripts
 
-The easiest way to install TensorFI is to use the 
-provided install.sh script which will install the Anaconda package
-manager and the required dependencies, setting the 
-appropriate paths.
+The easiest way to install TensorFI is to use the provided install-lib.sh and
+install-dep.sh scripts which will install the Anaconda package manager and the
+required dependencies, setting the appropriate paths. These do not directly
+install all packages to your existing environment; but create a virtual env and
+then installing required packages in that. This is so that you can deactivate it
+and return to your original environment at any time.
+
+First, execute the **install-lib.sh**. This installs Anaconda for creating your
+virtual environment to run any TensorFI programs.
+
+After the script executes, source your ~/.bashrc file so the path variables
+are updated to use Anaconda further.
+
+Next, execute the **install-dep.sh**. This creates an anaconda3 virtual
+environment called "tensorfi" and installs the other dependencies.
 
 ### Manual installation
 
@@ -98,14 +109,19 @@ TensorFlow installation instructions can be found at:
 	https://www.tensorflow.org/install/
 
 3. Install the scipy and sklearn modules. On both
-Ubutnu and MacOS, type:
+Ubuntu and MacOS, type:
 
    ```
    pip install scipy
    pip install sklearn
    ```
 
-4. Set your PYTHONPATH to the TENSORFIHOME
+Make sure you have YAML support. If not, try `pip install yaml`
+or `pip install pyyaml` depending on your preference.
+
+### Setting your Python path for TensorFI
+
+Set your PYTHONPATH to the TENSORFIHOME
 where TENSORFIHOME is where you've installed TensorFI
 (This assumes you're using Bash as your shell).
 
@@ -113,7 +129,12 @@ where TENSORFIHOME is where you've installed TensorFI
    export PYTHONPATH=$PYTHONPATH:$TENSORFIHOME
    ```
 
-5. Run the test files by going to the TENSORFIHOME
+You can skip this step if you are using a virtual environment to
+run TensorFI.
+
+## 4. Running TensorFI test files after installation
+
+Run the test files by going to the TENSORFIHOME
 directory and running runAll.sh in Tests. All the
 tests should pass if your installation was successful. 
 The script will also check if you have all of 
@@ -130,7 +151,9 @@ you run it (or you can manually create the directories before).
 Also, make sure the python interpreter name is correct
 in the script (it defaults to python) - if not, change it.
 
-6. If you want a visual demo of TensorFI, 
+## 5. Visual demonstrations
+
+If you want a visual demo of TensorFI, 
   try running autoencoder.py from TensorFIHOME directory.
 
    ```
