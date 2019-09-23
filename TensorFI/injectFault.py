@@ -341,7 +341,10 @@ def injectFaultAssign(a, b):
 def injectFaultIdentity(a):
 	"Inject a fault in the identitiy operation"	
 	logging.debug("Calling Operator Identity " + getArgs(a))
-	res = a
+#	res = a
+        sess = tf.Session()
+        identity = tf.identity(a)	
+        res = sess.run(identity)
 	res = condPerturb(Ops.IDENTITY, res)
 	if logReturn: logging.debug("\tReturning from Identity " + str(res) )
 	return res	
