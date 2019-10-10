@@ -133,6 +133,17 @@ class TensorFI:
 			print "\t", tensor.name, " : ", fiTensor.name
 		print "Done fiMap"
 
+	def setProbability(self):
+		"Set the probabilities for FI in operators based on the output state space"
+		opProbability = []
+		totalStateSpace = 0.
+		for (tensor, fiTensor) in self.fiMap.iteritems():
+			opShape = tensor.shape.num_elements()
+			opProbability.append(opShape)
+			totalStateSpace += opShape
+		opProbability[:] = [x / totalStateSpace for x in opProbability]
+		return opProbability
+
 	# These are all functions that can be called externally for interacting with the injector
 
 	def turnOffInjections(self):
@@ -193,7 +204,13 @@ class TensorFI:
 		# Configure the fault injection parameters for the injection functions	
 		# fiConf is a global variable as it needs to be accessible to the FI functions
 		logging.info("Initializing the fault injection parameters")
-		initFIConfig(fiParams)
+
+		# Random sampling across state space distribution for one fault per run
+		if fiParams["InjectMode"] == "oneFaultPerRun":
+			opProbabilities = self.setProbability()
+			initFIConfig(fiParams, opProbabilities)
+		else:
+			initFIConfig(fiParams)
 
 		# Initialize the default fault log - this may be overridden by the launch method later
 		# This is in case the run method is called directly without going through the launch
