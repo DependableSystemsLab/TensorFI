@@ -3,6 +3,7 @@
 # If you add a new fault type, please create both the scalar and tensor functions 
 
 import numpy as np
+from math import floor
 
 # Currently, we support 6 types of faults {None, Rand, Zero, Rand-element, bitFlip-element, bitFlip-tensor} - See fiConfig.py
 
@@ -90,7 +91,7 @@ def randomBitFlip(val):
 	# Split the integer part and decimal part in binary expression
 	def getBinary(number):
 		# integer data type
-		if(isinstance(number, int)):
+		if(floor(number) == number):
 			integer = bin(int(number)).lstrip("0b") 
 			# 21 digits for integer
 			integer = integer.zfill(21)
