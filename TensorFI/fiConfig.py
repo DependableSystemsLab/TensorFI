@@ -27,6 +27,7 @@ class Ops(Enum):
 	EQUAL = "EQUAL"
 	NOT_EQUAL = "NOT-EQUAL"
 	LESS_EQUAL = "LESS-EQUAL"
+	GREATER_EQUAL = "GREATER-EQUAL"
 	CAST = "CAST"
 	MEAN = "MEAN"
 	COUNT_NONZERO = "COUNT-NONZERO"
@@ -56,6 +57,7 @@ class Ops(Enum):
 	END = "END"  # Dummy operation for end of list
 	LRN = "LRN" 
 	ELU = "ELU"
+	RANDOM_UNIFORM = "RANDOM-UNIFORM"
 # End of Ops
 
 # These are the list of supported Fault types below (if you add a new type, please add it here)
