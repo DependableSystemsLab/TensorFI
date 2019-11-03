@@ -513,6 +513,14 @@ def injectFaultLessEqual(a, b):
 	if logReturn: logging.debug("\tReturning from Less Equal " + str(res) )
 	return res
 
+def injectFaultGreaterEqual(a, b):
+	"Function to call injectFault on greater equal"
+	logging.debug("Calling Operator Greater Equal " + getArgs(a, b))
+	res = np.greater_equal(a, b)
+	res = condPerturb(Ops.GREATER_EQUAL, res)
+	if logReturn: logging.debug("\tReturning from Greater Equal " + str(res) )
+	return res
+
 def injectFaultMean(a, b):
 	"Function to call injectFault on mean"
 	logging.debug("Calling Operator mean " + getArgs(a, b))
@@ -748,8 +756,7 @@ def injectFaultLRN(a, bias, alpha, beta):
 		res = resOp.eval() 
 	res = condPerturb(Ops.LRN, res)
 	if logReturn: logging.debug("\tReturning from LRN " + str(res) )
-	return res 
-
+	return res
 
 def injectFaultELU(a):
 	"Function to call injectFault on ELU"
@@ -760,6 +767,16 @@ def injectFaultELU(a):
 		res = relu.eval()
 	res = condPerturb(Ops.ELU, res)
 	if logReturn: logging.debug("\tReturning from ELU " + str(res) )
+	return res
+
+def injectFaultRandomUniform(a):
+	"Function to call injectFault on Random Uniform"
+	logging.debug("Calling Operator RandomUniform" + getArgs(a))
+	ru = tf.random.uniform(a)
+	with tf.Session() as sess:
+		res = ru.eval()
+	res = condPerturb(Ops.RANDOM_UNIFORM, res)
+	if logReturn: logging.debug("\tReturning from Random Uniform " + str(res) )
 	return res
 
 # End of implemented operators
@@ -1117,6 +1134,7 @@ opTable = {
 			"Equal" : injectFaultEqual,
 			"NotEqual" : injectFaultNotEqual,
 			"LessEqual" : injectFaultLessEqual,
+			"GreaterEqual" : injectFaultGreaterEqual,
 			"TruncatedNormal" : injectFaultTruncatedNormal,
 			"Conv2D" : injectFaultConv2D,
 			"Relu" : injectFaultRelu, 
