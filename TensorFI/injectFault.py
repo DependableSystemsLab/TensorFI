@@ -581,9 +581,11 @@ def injectFaultUnstack(a):
 
 def injectFaultStridedSlice(a, b, c, d):
 	"Function to call injectFault on StridedSlice"
-	logging.debug("Calling Operator StridedSlice " + getArgs(a))
+	logging.debug("Calling Operator StridedSlice " + getArgs(a, b, c, d))
 	# FIXME: Implement this functionality
-	res = a
+	resOp = tf.strided_slice(a, b, c, d)
+	with tf.Session() as sess:
+		res = resOp.eval()
 	res = condPerturb(Ops.STRIDEDSLICE, res)
 	if logReturn: logging.debug("\tReturning from StridedSlice " + str(res) )
 	return res
