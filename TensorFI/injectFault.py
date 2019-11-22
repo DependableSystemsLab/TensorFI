@@ -458,6 +458,17 @@ def injectFaultReshape(a, b):
 	if logReturn: logging.debug("\tReturning from Reshape " + str(res) )
 	return res
 
+def injectFaultOneHot(a, b, c, d):
+	"Function to call injectFault on OneHot"
+	logging.debug("Calling Operator One Hot " + getArgs(a, b, c, d))
+	# TF adds two default arguments, so we need to pass them as well
+	resOp = tf.one_hot(a, b, c, d)
+	with tf.Session() as sess:
+		res = resOp.eval()
+	res = condPerturb(Ops.ONE_HOT, res)
+	if logReturn: logging.debug("\tReturning from One Hot " + str(res)  )
+	return res
+
 def injectFaultMatMul(a, b):
 	"Function to call injectFault on matrix multiplication"
 	logging.debug("Calling Operator MatMul " + getArgs(a, b))
@@ -472,8 +483,10 @@ def injectFaultMatMul(a, b):
 
 def injectFaultArgMax(a, b):
 	"Function to call injectFault on ArgMax"
-	logging.debug("Calling Operator ArgMax " + getArgs(a, b)) 	
-	res = np.argmax(a, b)
+	logging.debug("Calling Operator ArgMax " + getArgs(a, b))
+	resOp = tf.argmax(a, b)
+	with tf.Session() as sess:
+		res = resOp.eval()
 	res = condPerturb(Ops.ARGMAX, res)
 	if logReturn: logging.debug("\tReturning from ArgMax " + str(res) )
 	return res
@@ -1109,6 +1122,7 @@ opTable = {
 			"Min" : injectFaultMinimum,	# FIXME: Not sure if Min is a synonymn of Minimum or a new operation
 			"FloorDiv" : injectFaultFloorDiv,
 			"Reshape" : injectFaultReshape,
+			"OneHot": injectFaultOneHot,
 			"Tile" : injectFaultTile,
 			"ConcatV2" : injectFaultConcatV2,
 			"ConcatOffset" : injectFaultConcatOffset,
