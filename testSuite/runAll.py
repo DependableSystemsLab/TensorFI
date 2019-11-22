@@ -1,9 +1,7 @@
 #!/usr/bin/python
 
-# Please run this script in the testSuite folder
-
-# script to run the test suite
-# include only stable and working tests in this file
+# Script to run the test suite
+# Please include only stable and working tests in this file
 
 # Check correct python version
 import sys
@@ -13,21 +11,7 @@ if sys.version_info[0] == 2 and sys.version_info[1] >= 7:
 else:
     raise Exception("Please run with python 2.7+ (Python 3 is not supported)")
 
-# check the script's directory
-import os
-SCRIPT_PATH   = os.path.abspath(__file__)
-TESTSUITE_DIR = os.path.abspath(os.path.join(SCRIPT_PATH, os.pardir))
-
-if os.path.basename(TESTSUITE_DIR) == "testSuite":
-    pass
-else:
-    print "Please make sure this script is in the testSuite folder before running it"
-    exit()
-
-# set working directory to the TensorFI root folder
-TENSORFI_ROOT = os.path.abspath(os.path.join(TESTSUITE_DIR, os.pardir))
-os.chdir(TENSORFI_ROOT)
-
+# Begin checking python package installations
 sys.stdout.write("Checking for correct python packages...")
 sys.stdout.flush()
 
@@ -63,3 +47,19 @@ if tuple(map(int, (yaml.__version__.split("."))))[0] < 3:
 sys.stdout.write("\rChecking for correct python packages... Passed\n")
 sys.stdout.flush()
 
+print "\nBeginning test cases...\n"
+passed_tests = []
+failed_tests = []
+
+# regression operators test
+import regression_operators
+sys.stdout.write("Running regression_operators test...")
+sys.stdout.flush()
+if regression_operators.run_test(suppress_out=True)[0]:
+    passed_tests.append("regression_operators.py")
+    sys.stdout.write("\rRunning regression_operators test... Passed\n")
+    sys.stdout.flush()
+else:
+    passed_tests.append("regression_operators.py")
+    sys.stdout.write("\rRunning regression_operators test... Failed\n")
+    sys.stdout.flush()
