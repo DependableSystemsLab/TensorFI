@@ -590,7 +590,12 @@ def injectFaultUnpack(a):
 def injectFaultUnstack(a):
 	"Function to call injectFault on unstack"
 	# This is the same as Unpack in newer versions of TF
-	return injectFaultUnpack(a)
+	logging.debug("Calling Operator Unstack " + getArgs(a, b, c))
+	resOp = tf.unstack(a, b, c)
+	with tf.Session() as sess:
+		res = resOp.eval()
+	if logReturn: logging.debug("\tReturning from Unstack " + str(res) )
+	return res
 
 def injectFaultStridedSlice(a, b, c, d):
 	"Function to call injectFault on StridedSlice"
@@ -625,9 +630,10 @@ def injectFaultPack(a, b):
 def injectFaultConcatV2(a, b, c):
 	"Function to call injectFault on ConcatV2"
 	logging.debug("Calling Operator ConcatV2" + getArgs(a, b, c))
-	# FIXME: According to tf doc, this should only take 2 arguments
-	# 	but somehow it is complaining that it requires 3 arguments
-	return injectFaultPack(a, b)
+	res = np.concatenate((a, b), c)
+	res = condPerturb(Ops.PACK, res)
+	if logReturn: logging.debug("\tReturning from Concat " + str(res) )
+	return res
 
 def injectFaultSoftmax(a):
 	"Function to call injectFault on Softmax"
