@@ -51,15 +51,15 @@ print "\nBeginning test cases...\n"
 passed_tests = []
 failed_tests = []
 
-# regression operators test
-import regression_operators
-sys.stdout.write("Running regression_operators test...")
+# operations test
+import operations_runTests
+sys.stdout.write("Running operations_runTests test...")
 sys.stdout.flush()
-if regression_operators.run_test(suppress_out=True)[0]:
-    passed_tests.append("regression_operators.py")
-    sys.stdout.write("\rRunning regression_operators test... Passed\n")
+if operations_runTests.run_test(suppress_out=True)[0]:
+    passed_tests.append("operations_runTests.py")
+    sys.stdout.write("\rRunning operations_runTests test... Passed\n")
     sys.stdout.flush()
 else:
-    passed_tests.append("regression_operators.py")
-    sys.stdout.write("\rRunning regression_operators test... Failed\n")
+    passed_tests.append("operations_runTests.py")
+    sys.stdout.write("\rRunning operations_runTests test... Failed\n")
     sys.stdout.flush()
