@@ -34,7 +34,7 @@ def run_test(suppress_out=False):
     for op_type in inputgenMap:
 
         if op_type == "end_of_ops":
-            break # end of ops list, move onto instrumentation
+            continue # end of ops list, ignore
 
         print "op_type = " + op_type
 
