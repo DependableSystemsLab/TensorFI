@@ -491,6 +491,592 @@ def inputgen_Range():
 
     return inputs
 
+def inputgen_MatMul():
+    # operations supported:
+    # tf.linalg.matmul( a, b, transpose_a=False, transpose_b=False, adjoint_a=False, adjoint_b=False, a_is_sparse=False, b_is_sparse=False, name=None )
+
+    # a: Tensor of type float16, float32, float64, int32, complex64, complex128 and rank > 1.
+    # b: Tensor with same type and rank as a.
+    # transpose_a: If True, a is transposed before multiplication.
+    # transpose_b: If True, b is transposed before multiplication.
+    # adjoint_a: If True, a is conjugated and transposed before multiplication.
+    # adjoint_b: If True, b is conjugated and transposed before multiplication.
+    # a_is_sparse: If True, a is treated as a sparse matrix.
+    # b_is_sparse: If True, b is treated as a sparse matrix.
+    # name: Name for the operation (optional).
+
+    # shape of input a is (i,j)
+    # shape of input b is (j,k)
+    # result is a*b with shape (i,k)
+
+    inputs = [] # each item in this list is a set of inputs passed to a create_op() in the main script
+
+    # datatype: int
+    rand_ints = []
+    for x in range(0,1000):
+        random.seed(x)
+        rand_ints.append(random.randint(-1000,1000))
+    for i in range(1,15):
+        for j in range(1,15):
+            for k in range(1,15):
+                # generate input a
+                num_elements_a = i * j
+                random.seed(num_elements_a)
+                input_a = tf.constant(random.sample(rand_ints, num_elements_a), shape=(i,j), dtype=tf.int32)
+                # generate input b
+                num_elements_b = j * k
+                random.seed(num_elements_b)
+                input_b = tf.constant(random.sample(rand_ints, num_elements_b), shape=(j,k), dtype=tf.int32)
+
+                inputs.append([input_a,input_b])
+
+    # datatype: float
+    rand_floats = []
+    for x in range(0,1000):
+        random.seed(x)
+        rand_floats.append(random.uniform(-1000,1000))
+    for i in range(1,15):
+        for j in range(1,15):
+            for k in range(1,15):
+                # generate input a
+                num_elements_a = i * j
+                random.seed(num_elements_a)
+                input_a = tf.constant(random.sample(rand_floats, num_elements_a), shape=(i,j), dtype=tf.float32)
+                # generate input b
+                num_elements_b = j * k
+                random.seed(num_elements_b)
+                input_b = tf.constant(random.sample(rand_floats, num_elements_b), shape=(j,k), dtype=tf.float32)
+
+                inputs.append([input_a,input_b])
+
+    # datatype: complex
+    rand_floats = []
+    for x in range(0,1000):
+        random.seed(x)
+        rand_floats.append(random.uniform(-1000,1000))
+    for i in range(1,15):
+        for j in range(1,15):
+            for k in range(1,15):
+                # generate input a
+                num_elements_a = i * j
+                random.seed(num_elements_a)
+                real_a = tf.constant(random.sample(rand_floats, num_elements_a), shape=(i,j), dtype=tf.float32)
+                random.seed(num_elements_a + i)
+                imag_a = tf.constant(random.sample(rand_floats, num_elements_a), shape=(i,j), dtype=tf.float32)
+                input_a = tf.complex(real_a,imag_a)
+                # generate input b
+                num_elements_b = j * k
+                random.seed(num_elements_b)
+                real_b = tf.constant(random.sample(rand_floats, num_elements_b), shape=(j,k), dtype=tf.float32)
+                random.seed(num_elements_b + k)
+                imag_b = tf.constant(random.sample(rand_floats, num_elements_b), shape=(j,k), dtype=tf.float32)
+                input_b = tf.complex(real_b,imag_b)
+
+                inputs.append([input_a,input_b])
+
+    return inputs
+
+def inputgen_ArgMax():
+    # operations supported:
+    # tf.math.argmax( input, axis=None, name=None, dimension=None, output_type=tf.dtypes.int64 )
+    # tf.math.argmin( input, axis=None, name=None, dimension=None, output_type=tf.dtypes.int64 )
+
+    # input: A Tensor. Must be one of the following types: float32, float64, int32, uint8, int16, int8, complex64, int64, qint8, quint8, qint32, bfloat16, uint16, complex128, half, uint32, uint64.
+    # axis: A Tensor. Must be one of the following types: int32, int64. int32 or int64, must be in the range [-rank(input), rank(input)). Describes which axis of the input Tensor to reduce across. For vectors, use axis = 0.
+    # output_type: An optional tf.DType from: tf.int32, tf.int64. Defaults to tf.int64.
+    # name: A name for the operation (optional).
+
+    # general approach: create tensors of varying shapes (both input shapes must match) filled with random constant numbers
+
+    inputs = [] # each item in this list is a set of inputs passed to a create_op() in the main script
+
+    # datatype: int
+    rand_ints = []
+    for x in range(0,1000):
+        random.seed(x)
+        rand_ints.append(random.randint(-1000,1000))
+    # create inputs of different tensor shapes
+    for i in range(2,15):
+        for j in range(2,15):
+            # shape of tensor is (i,j)
+            num_elements = i * j
+            random.seed(i+j)
+            input_x = tf.constant(random.sample(rand_ints, num_elements), shape=(i,j), dtype=tf.int32)
+            axis = tf.constant(random.randint(0,1), dtype=tf.int32)
+            inputs.append([input_x, axis])
+
+    # datatype: float
+    rand_floats = []
+    for x in range(0,1000):
+        random.seed(x)
+        rand_floats.append(random.uniform(-1000,1000))
+    # create inputs of different tensor shapes
+    for i in range(2,15):
+        for j in range(2,15):
+            # shape of tensor is (i,j)
+            num_elements = i * j
+            random.seed(i+j)
+            input_x = tf.constant(random.sample(rand_floats, num_elements), shape=(i,j), dtype=tf.float32)
+            axis = tf.constant(random.randint(0,1), dtype=tf.int32)
+            inputs.append([input_x, axis])
+
+    # datatype: complex
+    if not tf.test.is_gpu_available():
+        # NOTE: must have a GPU to test the remaining inputs
+        return inputs
+    
+    rand_floats = []
+    for x in range(0,1000):
+        random.seed(x)
+        rand_floats.append(random.uniform(-1000,1000))
+    # create inputs of different tensor shapes
+    for i in range(2,10):
+        for j in range(2,10):
+            # shape of tensor is (i,j)
+            num_elements = i * j
+            random.seed(i)
+            real_x = tf.constant(random.sample(rand_floats, num_elements), shape=(i,j), dtype=tf.float32)
+            random.seed(j)
+            imag_x = tf.constant(random.sample(rand_floats, num_elements), shape=(i,j), dtype=tf.float32)
+            input_x = tf.complex(real_x,imag_x)
+
+            axis = tf.constant(random.randint(0,1))
+            inputs.append([input_x, axis])
+
+    return inputs
+
+def inputgen_Equal():
+    # operations supported:
+    # tf.math.equal( x, y, name=None )
+    # tf.math.not_equal( x, y, name=None )
+
+    # x: A Tensor. Must be one of the following types: bfloat16, half, float32, float64, uint8, int8, int16, int32, int64, complex64, quint8, qint8, qint32, string, bool, complex128.
+    # y: A Tensor. Must have the same type as x.
+    # name: A name for the operation (optional).
+
+    inputs = [] # each item in this list is a set of inputs passed to a create_op() in the main script
+
+    # datatype: int
+    rand_ints = []
+    for x in range(0,100):
+        random.seed(x)
+        rand_ints.append(random.randint(-100,100))
+    # create inputs of different tensor shapes
+    for i in range(1,10):
+        for j in range(1,10):
+            # shape of tensor is (i,j)
+            num_elements = i * j
+            random.seed(i)
+            input_x = tf.constant(random.sample(rand_ints, num_elements), shape=(i,j), dtype=tf.int32)
+            if random.choice([True,False]):
+                random.seed(j)
+            input_y = tf.constant(random.sample(rand_ints, num_elements), shape=(i,j), dtype=tf.int32)
+            inputs.append([input_x,input_y])
+
+    # datatype: float
+    rand_floats = []
+    for x in range(0,100):
+        random.seed(x)
+        rand_floats.append(random.uniform(-100,100))
+    # create inputs of different tensor shapes
+    for i in range(1,10):
+        for j in range(1,10):
+            # shape of tensor is (i,j)
+            num_elements = i * j
+            random.seed(i)
+            input_x = tf.constant(random.sample(rand_floats, num_elements), shape=(i,j), dtype=tf.float32)
+            if random.choice([True,False]):
+                random.seed(j)
+            input_y = tf.constant(random.sample(rand_floats, num_elements), shape=(i,j), dtype=tf.float32)
+            inputs.append([input_x,input_y])
+
+    # datatype: complex
+    rand_floats = []
+    for x in range(0,100):
+        random.seed(x)
+        rand_floats.append(random.uniform(-100,100))
+    # create inputs of different tensor shapes
+    for i in range(1,10):
+        for j in range(1,10):
+            # shape of tensor is (i,j)
+            num_elements = i * j
+            random.seed(i)
+            real_x = tf.constant(random.sample(rand_floats, num_elements), shape=(i,j), dtype=tf.float32)
+            random.seed(i*2)
+            imag_x = tf.constant(random.sample(rand_floats, num_elements), shape=(i,j), dtype=tf.float32)
+            input_x = tf.complex(real_x,imag_x)
+            if random.choice([True,False]):
+                random.seed(i)
+                real_y = tf.constant(random.sample(rand_floats, num_elements), shape=(i,j), dtype=tf.float32)
+                random.seed(i*2)
+                imag_y = tf.constant(random.sample(rand_floats, num_elements), shape=(i,j), dtype=tf.float32)
+            else:
+                random.seed(j)
+                real_y = tf.constant(random.sample(rand_floats, num_elements), shape=(i,j), dtype=tf.float32)
+                random.seed(j*2)
+                imag_y = tf.constant(random.sample(rand_floats, num_elements), shape=(i,j), dtype=tf.float32)
+            input_y = tf.complex(real_y,imag_y)
+            inputs.append([input_x,input_y])
+
+    # datatype: string
+    rand_strings = []
+    for x in range(0,100):
+        random.seed(x)
+        N = 8 # size of random string
+        rand_strings.append(''.join(random.choice(string.ascii_letters + string.punctuation) for x in range(N)))
+    # create inputs of different tensor shapes
+    for i in range(1,10):
+        for j in range(1,10):
+            # shape of tensor is (i,j)
+            num_elements = i * j
+            random.seed(i)
+            input_x = tf.constant(random.sample(rand_strings, num_elements), shape=(i,j))
+            if random.choice([True,False]):
+                random.seed(j)
+            input_y = tf.constant(random.sample(rand_strings, num_elements), shape=(i,j))
+            inputs.append([input_x,input_y])
+
+    # datatype: bool
+    rand_bools = []
+    for x in range(0,100):
+        random.seed(x)
+        rand_bools.append(random.choice([True,False]))
+    # create inputs of different tensor shapes
+    for i in range(1,10):
+        for j in range(1,10):
+            # shape of tensor is (i,j)
+            num_elements = i * j
+            random.seed(i)
+            input_x = tf.constant(random.sample(rand_bools, num_elements), shape=(i,j), dtype=tf.bool)
+            if random.choice([True,False]):
+                random.seed(j)
+            input_y = tf.constant(random.sample(rand_bools, num_elements), shape=(i,j), dtype=tf.bool)
+            inputs.append([input_x,input_y])
+
+    return inputs
+
+def inputgen_LessEqual():
+    # operations supported:
+    # tf.math.less_equal( x, y, name=None )
+
+    # x: A Tensor. Must be one of the following types: float32, float64, int32, uint8, int16, int8, int64, bfloat16, uint16, half, uint32, uint64.
+    # y: A Tensor. Must have the same type as x.
+    # name: A name for the operation (optional).
+
+    inputs = [] # each item in this list is a set of inputs passed to a create_op() in the main script
+
+    # datatype: int
+    rand_ints = []
+    for x in range(0,100):
+        random.seed(x)
+        rand_ints.append(random.randint(-100,100))
+    # create inputs of different tensor shapes
+    for i in range(1,10):
+        for j in range(1,10):
+            # shape of tensor is (i,j)
+            num_elements = i * j
+            random.seed(i)
+            input_x = tf.constant(random.sample(rand_ints, num_elements), shape=(i,j), dtype=tf.int32)
+            if random.choice([True,False]):
+                input_y = tf.constant(100, shape=(i,j), dtype=tf.int32)
+            else:
+                random.seed(j)
+                input_y = tf.constant(random.sample(rand_ints, num_elements), shape=(i,j), dtype=tf.int32)
+            inputs.append([input_x,input_y])
+
+    # datatype: float
+    rand_floats = []
+    for x in range(0,100):
+        random.seed(x)
+        rand_floats.append(random.uniform(-100,100))
+    # create inputs of different tensor shapes
+    for i in range(1,10):
+        for j in range(1,10):
+            # shape of tensor is (i,j)
+            num_elements = i * j
+            random.seed(i)
+            input_x = tf.constant(random.sample(rand_floats, num_elements), shape=(i,j), dtype=tf.float32)
+            if random.choice([True,False]):
+                input_y = tf.constant(100.0, shape=(i,j), dtype=tf.float32)
+            else:
+                random.seed(j)
+                input_y = tf.constant(random.sample(rand_floats, num_elements), shape=(i,j), dtype=tf.float32)
+            inputs.append([input_x,input_y])
+
+    return inputs
+
+def inputgen_Cast():
+    # operations supported:
+    # tf.dtypes.cast( x, dtype, name=None )
+
+    # x: A Tensor or SparseTensor or IndexedSlices of numeric type. It could be uint8, uint16, uint32, uint64, int8, int16, int32, int64, float16, float32, float64, complex64, complex128, bfloat16.
+    # dtype: The destination type. The list of supported dtypes is the same as x.
+    # name: A name for the operation (optional).
+
+    # general approach: create tensors of varying shapes (both input shapes must match) filled with random constant numbers
+
+    inputs = [] # each item in this list is a set of inputs passed to a create_op() in the main script
+
+    dtypes = [tf.uint8, tf.uint16, tf.uint32, tf.uint64, tf.int8, tf.int16, tf.int32, tf.int64, tf.float16, tf.float32, tf.float64, tf.complex64, tf.complex128, tf.bfloat16]
+
+    # datatype: int
+    rand_ints = []
+    for x in range(0,100):
+        random.seed(x)
+        rand_ints.append(random.randint(-100,100))
+    # create inputs of different tensor shapes
+    for i in range(1,10):
+        for j in range(1,10):
+            # shape of tensor is (i,j)
+            num_elements = i * j
+            random.seed(i+j)
+            input_x = tf.constant(random.sample(rand_ints, num_elements), shape=(i,j), dtype=tf.int32)
+            dtype = random.choice(dtypes)
+            inputs.append([input_x, dtype])
+
+    # datatype: float
+    rand_floats = []
+    for x in range(0,100):
+        random.seed(x)
+        rand_floats.append(random.uniform(-100,100))
+    # create inputs of different tensor shapes
+    for i in range(1,10):
+        for j in range(1,10):
+            # shape of tensor is (i,j)
+            num_elements = i * j
+            random.seed(i+j)
+            input_x = tf.constant(random.sample(rand_floats, num_elements), shape=(i,j), dtype=tf.float32)
+            dtype = random.choice(dtypes)
+            inputs.append([input_x, dtype])
+
+    # datatype: complex
+    rand_floats = []
+    for x in range(0,100):
+        random.seed(x)
+        rand_floats.append(random.uniform(-100,100))
+    # create inputs of different tensor shapes
+    for i in range(1,10):
+        for j in range(1,10):
+            # shape of tensor is (i,j)
+            num_elements = i * j
+            random.seed(i)
+            real_x = tf.constant(random.sample(rand_floats, num_elements), shape=(i,j), dtype=tf.float32)
+            random.seed(j)
+            imag_x = tf.constant(random.sample(rand_floats, num_elements), shape=(i,j), dtype=tf.float32)
+            input_x = tf.complex(real_x,imag_x)
+
+            dtype = random.choice(dtypes)
+            inputs.append([input_x, dtype])
+
+    return inputs
+
+def inputgen_Mean():
+    # operations supported:
+    # tf.math.reduce_mean( input_tensor, axis=None, keepdims=None, name=None, reduction_indices=None, keep_dims=None )
+
+    # input_tensor: The tensor to reduce. Should have numeric type.
+    # axis: The dimensions to reduce. If None (the default), reduces all dimensions. Must be in the range [-rank(input_tensor), rank(input_tensor)).
+    # keepdims: If true, retains reduced dimensions with length 1.
+    # name: A name for the operation (optional).
+    # reduction_indices: The old (deprecated) name for axis.
+    # keep_dims: Deprecated alias for keepdims.
+
+    inputs = [] # each item in this list is a set of inputs passed to a create_op() in the main script
+
+    # datatype: int
+    rand_ints = []
+    for x in range(0,1000):
+        random.seed(x)
+        rand_ints.append(random.randint(-1000,1000))
+    # create inputs of different tensor shapes
+    for i in range(2,15):
+        for j in range(2,15):
+            # shape of tensor is (i,j)
+            num_elements = i * j
+            random.seed(i+j)
+            input_x = tf.constant(random.sample(rand_ints, num_elements), shape=(i,j), dtype=tf.int32)
+            axis = tf.constant(random.randint(0,1), dtype=tf.int32)
+            inputs.append([input_x, axis])
+
+    # datatype: float
+    rand_floats = []
+    for x in range(0,1000):
+        random.seed(x)
+        rand_floats.append(random.uniform(-1000,1000))
+    # create inputs of different tensor shapes
+    for i in range(2,15):
+        for j in range(2,15):
+            # shape of tensor is (i,j)
+            num_elements = i * j
+            random.seed(i+j)
+            input_x = tf.constant(random.sample(rand_floats, num_elements), shape=(i,j), dtype=tf.float32)
+            axis = tf.constant(random.randint(0,1), dtype=tf.int32)
+            inputs.append([input_x, axis])
+
+    return inputs
+
+def inputgen_NonZero():
+    # operations supported:
+    # tf.math.count_nonzero( input_tensor=None, axis=None, keepdims=None, dtype=tf.dtypes.int64, name=None, reduction_indices=None, keep_dims=None, input=None )
+
+    # input_tensor: The tensor to reduce. Should be of numeric type, bool, or string.
+    # axis: The dimensions to reduce. If None (the default), reduces all dimensions. Must be in the range [-rank(input_tensor), rank(input_tensor)).
+    # keepdims: If true, retains reduced dimensions with length 1.
+    # dtype: The output dtype; defaults to tf.int64.
+    # name: A name for the operation (optional).
+    # reduction_indices: The old (deprecated) name for axis.
+    # keep_dims: Deprecated alias for keepdims.
+    # input: Overrides input_tensor. For compatibility.
+
+    inputs = [] # each item in this list is a set of inputs passed to a create_op() in the main script
+
+    # datatype: int
+    rand_ints = []
+    for x in range(0,100):
+        random.seed(x)
+        if random.choice([True,False]):
+            rand_ints.append(int(0))
+        else:
+            rand_ints.append(random.randint(-100,100))
+    # create inputs of different tensor shapes
+    for i in range(1,10):
+        for j in range(1,10):
+            # shape of tensor is (i,j)
+            num_elements = i * j
+            random.seed(i+j)
+            input_x = tf.constant(random.sample(rand_ints, num_elements), shape=(i,j), dtype=tf.int32)
+            axis = tf.constant(random.randint(0,1), dtype=tf.int32)
+            inputs.append([input_x, axis])
+
+    # datatype: float
+    rand_floats = []
+    for x in range(0,100):
+        random.seed(x)
+        if random.choice([True,False]):
+            rand_floats.append(float(0.0))
+        else:
+            rand_floats.append(random.uniform(-100.0,100.0))
+    # create inputs of different tensor shapes
+    for i in range(1,10):
+        for j in range(1,10):
+            # shape of tensor is (i,j)
+            num_elements = i * j
+            random.seed(i+j)
+            input_x = tf.constant(random.sample(rand_floats, num_elements), shape=(i,j), dtype=tf.float32)
+            axis = tf.constant(random.randint(0,1), dtype=tf.int32)
+            inputs.append([input_x, axis])
+
+    # datatype: complex
+    rand_floats = []
+    for x in range(0,100):
+        random.seed(x)
+        if random.choice([True,False]):
+            rand_floats.append(float(0.0))
+        else:
+            rand_floats.append(random.uniform(-100,100))
+    # create inputs of different tensor shapes
+    for i in range(1,10):
+        for j in range(1,10):
+            # shape of tensor is (i,j)
+            num_elements = i * j
+            random.seed(i)
+            real_x = tf.constant(random.sample(rand_floats, num_elements), shape=(i,j), dtype=tf.float32)
+            random.seed(j)
+            imag_x = tf.constant(random.sample(rand_floats, num_elements), shape=(i,j), dtype=tf.float32)
+            input_x = tf.complex(real_x,imag_x)
+            axis = tf.constant(random.randint(0,1), dtype=tf.int32)
+            inputs.append([input_x, axis])
+
+    # datatype: string
+    rand_strings = []
+    N = 8 # size of random string
+    for x in range(0,100):
+        random.seed(x)
+        if random.choice([True,False]):
+            rand_strings.append('')
+        else:
+            rand_strings.append(''.join(random.choice(string.ascii_letters + string.punctuation) for x in range(N)))
+    # create inputs of different tensor shapes
+    for i in range(1,10):
+        for j in range(1,10):
+            # shape of tensor is (i,j)
+            num_elements = i * j
+            random.seed(i)
+            input_x = tf.constant(random.sample(rand_strings, num_elements), shape=(i,j))
+            axis = tf.constant(random.randint(0,1), dtype=tf.int32)
+            inputs.append([input_x,axis])
+
+    return inputs
+
+def inputgen_Reshape():
+    # operations supported:
+    # tf.reshape( tensor, shape, name=None )
+
+    # tensor: A Tensor.
+    # shape: A Tensor. Must be one of the following types: int32, int64. Defines the shape of the output tensor.
+    # name: A name for the operation (optional).
+
+    inputs = [] # each item in this list is a set of inputs passed to a create_op() in the main script
+
+    # datatype: int
+    rand_ints = []
+    for x in range(0,1000):
+        random.seed(x)
+        rand_ints.append(random.randint(-100,100))
+    # create inputs of different tensor shapes
+    for i in range(2,15):
+        for j in range(2,15):
+            # shape of tensor is (i,j)
+            num_elements = i * j
+            random.seed(i)
+            input_x = tf.constant(random.sample(rand_ints, num_elements), shape=(i,j), dtype=tf.int32)
+            for k in reversed(range(1,20)):
+                if num_elements % k == 0:
+                    shape = tf.constant([k,int(num_elements / k)],dtype=tf.int32)
+                    if (k,int(num_elements/k)) != (i,j):
+                        break
+            inputs.append([input_x,shape])
+
+    # datatype: float
+    rand_floats = []
+    for x in range(0,1000):
+        random.seed(x)
+        rand_floats.append(random.uniform(-100,100))
+    # create inputs of different tensor shapes
+    for i in range(2,15):
+        for j in range(2,15):
+            # shape of tensor is (i,j)
+            num_elements = i * j
+            random.seed(i)
+            input_x = tf.constant(random.sample(rand_floats, num_elements), shape=(i,j), dtype=tf.float32)
+            for k in reversed(range(1,20)):
+                if num_elements % k == 0:
+                    shape = tf.constant([k,int(num_elements / k)],dtype=tf.int32)
+                    if (k,int(num_elements/k)) != (i,j):
+                        break
+            inputs.append([input_x,shape])
+
+    # datatype: string
+    rand_strings = []
+    for x in range(0,1000):
+        random.seed(x)
+        N = 8 # size of random string
+        rand_strings.append(''.join(random.choice(string.ascii_letters + string.punctuation) for x in range(N)))
+    # create inputs of different tensor shapes
+    for i in range(2,15):
+        for j in range(2,15):
+            # shape of tensor is (i,j)
+            num_elements = i * j
+            random.seed(i)
+            input_x = tf.constant(random.sample(rand_strings, num_elements), shape=(i,j))
+            for k in reversed(range(1,20)):
+                if num_elements % k == 0:
+                    shape = tf.constant([k,int(num_elements / k)],dtype=tf.int32)
+                    if (k,int(num_elements/k)) != (i,j):
+                        break
+            inputs.append([input_x,shape])
+
+    return inputs
 
 
 # This table is used to store all of the operations that will be tested by operations_runTests.py
@@ -516,17 +1102,14 @@ inputgenMap = {
     "FloorMod": inputgen_FloorMod,
     "Range": inputgen_Range,
     "Rank": inputgen_Identity,
-    #"Sum": ,
-    #"MatMul": ,
-    #"ArgMax": ,
-    #"ArgMin": ,
-    #"Equal": ,
-    #"NotEqual": ,
-    #"LessEqual": ,
-    #"Cast": ,
-    #"Mean": ,
-    #"Count_nonzero": ,
-    #"Reshape": ,
+    "MatMul": inputgen_MatMul,
+    "ArgMax": inputgen_ArgMax,
+    "ArgMin": inputgen_ArgMax,
+    "Equal": inputgen_Equal,
+    "NotEqual": inputgen_Equal,
+    "LessEqual": inputgen_LessEqual,
+    "Mean": inputgen_Mean,
+    "Reshape": inputgen_Reshape,
     #"Conv2D": ,
     #"Relu": ,
     #"MaxPool": ,
@@ -546,6 +1129,9 @@ inputgenMap = {
     #"Sigmoid": ,
     #"Tanh": ,
     #"Pack": ,
+    #"Sum": ,
     #"Unpack": ,
+    #"Count_nonzero": inputgen_NonZero, # NOTE: this returns an error, seems like "Count_nonzero" is not a valid op name for tf.math.count_nonzero. Need to look into this
+    #"Cast": inputgen_Cast, # this raises an exception, apparently cannot pass the dtype parameter to create_op(), must figure out a way around this
     "end_of_ops": None # placeholder for end of list
 }
