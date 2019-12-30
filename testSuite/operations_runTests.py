@@ -36,39 +36,47 @@ def run_test(suppress_out=False):
         if op_type == "end_of_ops":
             continue # end of ops list, ignore
 
-        print "op_type = " + op_type
+        sys.stdout.write("Testing op_type %s..." % op_type)
+        sys.stdout.flush()
 
         # Create new graph context
-        g = tf.Graph()
-        graph_outputs = []
-        with g.as_default():
-            # generate inputs for op_type
-            input_list = inputgenMap[op_type]()
+        try:
+            g = tf.Graph()
+            graph_outputs = []
+            with g.as_default():
+                # generate inputs for op_type
+                input_list = inputgenMap[op_type]()
 
-            # loop through the generated inputs and create ops
-            for input_set in input_list:
-                graph_outputs.extend(g.create_op(op_type, input_set).outputs)
+                # loop through the generated inputs and create ops
+                for input_set in input_list:
+                    graph_outputs.extend(g.create_op(op_type, input_set).outputs)
 
-        with tf.compat.v1.Session(graph=g) as sess:
-            result_baseline = sess.run(graph_outputs)
-            
-            # instrument with TensorFI
-            fi = ti.TensorFI(sess, disableInjections=True, name=op_type, configFileName= confFile, logDir=logDir)
-            result_fi = sess.run(graph_outputs)
-            
-            # compare outputs
-            passed = True
-            for i,item in enumerate(result_fi):
-                if not np.array_equal(result_fi[i],result_baseline[i]):
-                    temp_out = "FI element " + str(result_fi[i]) + " not equal to baseline " + str(result_baseline[i])
-                    print temp_out
-                    passed = False
-            if passed:
-                print "Test passed for operation " + str(op_type)
-                ops_passed.append(op_type)
-            else:
-                print "Test FAILED for operation " + str(op_type)
-                ops_failed.append(op_type)
+            with tf.compat.v1.Session(graph=g) as sess:
+                result_baseline = sess.run(graph_outputs)
+                
+                # instrument with TensorFI
+                fi = ti.TensorFI(sess, disableInjections=True, name=op_type, configFileName= confFile, logDir=logDir)
+                result_fi = sess.run(graph_outputs)
+                
+                # compare outputs
+                passed = True
+                for i,item in enumerate(result_fi):
+                    if not np.array_equal(result_fi[i],result_baseline[i]):
+                        temp_out = "\nFI element " + str(result_fi[i]) + " not equal to baseline " + str(result_baseline[i])
+                        print temp_out
+                        passed = False
+                if passed:
+                    sys.stdout.write("\rTesting op_type %s... Passed\n" % op_type)
+                    sys.stdout.flush()
+                    ops_passed.append(op_type)
+                else:
+                    print "\nTest FAILED for operation " + str(op_type)
+                    print "Instrumented graph outputs not equal to original"
+                    ops_failed.append(op_type)
+        except Exception as e:
+            print "\nTest FAILED for operation " + str(op_type)
+            print "Exception thrown: " + str(e)
+            ops_failed.append(op_type)
     
     if suppress_out:
         sys.stdout = sys.__stdout__
