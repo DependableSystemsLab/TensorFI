@@ -12,7 +12,7 @@ Individual test scripts are called from the [runAll.py](runAll.py) script. The t
 
 ## When adding support for a new Operation in TensorFI
 
-After adding TensorFI support for a new Operation, this test suite must be updated to support the added Operation (otherwise the Operation will not be tested). The (operations_runTests.py) file tests the supported Operations to ensure the graphs instrumented by TensorFI result in the same outputs as the uninstrumented versions. 
+After adding TensorFI support for a new Operation, this test suite must be updated to support the added Operation (otherwise the Operation will not be tested). The [operations_inputgen.py](operations_inputgen.py) file tests the supported Operations to ensure the graphs instrumented by TensorFI result in the same outputs as the uninstrumented versions. 
 
 The inputgen data structure in [operations_inputgen.py](operations_inputgen.py) defines the Operations that will be tested with a mapping to an input generation function. The inputgen functions automatically generate the test input cases for each corresponding Operation. 
 
