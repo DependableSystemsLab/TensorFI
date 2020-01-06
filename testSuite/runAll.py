@@ -15,9 +15,16 @@ else:
 sys.stdout.write("Checking for correct python packages...")
 sys.stdout.flush()
 
+# suppress warnings
+import os
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+import yaml
+yaml.warnings({'YAMLLoadWarning': False})
+
 # Check that TensorFlow is installed
 try:
-    import tensorflow
+    import tensorflow as tf
+    tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.ERROR)
 except ImportError as e:
     print "\n\nTensorFlow is not installed properly, unable to import: " + str(e)
     exit()
@@ -37,7 +44,7 @@ except ImportError as e:
     exit()
 
 # Check python package versions
-if tuple(map(int, (tensorflow.__version__.split("."))))[0] < 1:
+if tuple(map(int, (tf.__version__.split("."))))[0] < 1:
     print "\n\nTensorFlow version must be 1.0 or newer"
     exit()
 if tuple(map(int, (yaml.__version__.split("."))))[0] < 3:
@@ -48,18 +55,47 @@ sys.stdout.write("\rChecking for correct python packages... Passed\n")
 sys.stdout.flush()
 
 print "\nBeginning test cases...\n"
-passed_tests = []
 failed_tests = []
 
-# operations test
 import operations_runTests
 sys.stdout.write("Running operations_runTests test...")
 sys.stdout.flush()
 if operations_runTests.run_test(suppress_out=True)[0]:
-    passed_tests.append("operations_runTests.py")
     sys.stdout.write("\rRunning operations_runTests test... Passed\n")
     sys.stdout.flush()
 else:
-    passed_tests.append("operations_runTests.py")
+    failed_tests.append("operations_runTests.py")
     sys.stdout.write("\rRunning operations_runTests test... Failed\n")
     sys.stdout.flush()
+
+import injections_alexnet_mnist
+sys.stdout.write("Running injections_alexnet_mnist test...")
+sys.stdout.flush()
+if injections_alexnet_mnist.run_test(suppress_out=True):
+    sys.stdout.write("\rRunning injections_alexnet_mnist test... Passed\n")
+    sys.stdout.flush()
+else:
+    failed_tests.append("injections_alexnet_mnist.py")
+    sys.stdout.write("\rRunning injections_alexnet_mnist test... Failed\n")
+    sys.stdout.flush()
+
+import injections_cnn_mnist
+sys.stdout.write("Running injections_cnn_mnist test...")
+sys.stdout.flush()
+if injections_cnn_mnist.run_test(suppress_out=True):
+    sys.stdout.write("\rRunning injections_cnn_mnist test... Passed\n")
+    sys.stdout.flush()
+else:
+    failed_tests.append("injections_cnn_mnist.py")
+    sys.stdout.write("\rRunning injections_cnn_mnist test... Failed\n")
+    sys.stdout.flush()
+
+# add new test scripts above this line 
+
+print "\n\nAll tests completed"
+if len(failed_tests) == 0:
+    print "All tests passed"
+else:
+    print "\nFailed tests: "
+    for t in failed_tests:
+        print t
