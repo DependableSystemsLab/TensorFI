@@ -12,7 +12,7 @@
 #   4) Rand-element - shuffle one of the data item in the output of the target op into random value
 #   5) bitFlip-element - single bit-flip over one data item in the output of the target op
 #   6) bitFlip-tensor - single bit-flip over all data items in the output of the target op 
-ScalarFaultType: None
+ScalarFaultType: bitFlip-element
 TensorFaultType: bitFlip-element 
 
 
@@ -39,13 +39,13 @@ Ops:
 # This is required when you want to specify which operator to inject (e.g., the second Conv operator).
 # Below is an example, you need to specify the numbers according to your model.
 Instances: 
-  - CONV2D = 2   # This means there are two conv2d operations in the model
-  - MAX-POOL = 2
-  - RELU = 3
-  - BIASADD = 2
-  - RESHAPE = 1
-  - ADD = 3
-  - MATMUL = 3 
+#  - CONV2D = 2   # This means there are two conv2d operations in the model
+#  - MAX-POOL = 2
+#  - RELU = 3
+#  - BIASADD = 2
+#  - RESHAPE = 1
+#  - ADD = 3
+#  - MATMUL = 3 
 
 
 

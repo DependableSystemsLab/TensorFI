@@ -1,7 +1,8 @@
 #!/usr/bin/python
 
 # This is an empty test script that follows the format for proper inclusion in the runAll.py main script
-# To include a new test in the suite, add the following lines of code to runAll.py
+# To include a new test in the suite, add the following lines of code to runAll.py and
+# change all instances of REFERENCE_empty_test_script to the file name
 #      
 #  import REFERENCE_empty_test_script
 #  sys.stdout.write("Running REFERENCE_empty_test_script test...")

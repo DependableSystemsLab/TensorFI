@@ -154,7 +154,7 @@ def run_test(suppress_out=False):
         # Calculate accuracy for 256 mnist test images
         acc1 = sess.run(accuracy, feed_dict={x: mnist.test.images[:256], y: mnist.test.labels[:256], keep_prob: 1.})
         print "Testing Accuracy:", acc1
-        fi = ti.TensorFI(sess, name = "lenet", disableInjections=False, configFileName= confFile, logDir=logDir)
+        fi = ti.TensorFI(sess, name = "lenet", disableInjections=False, logDir=logDir)
         acc2 = sess.run(accuracy, feed_dict={x: mnist.test.images[:256], y: mnist.test.labels[:256], keep_prob: 1.})
         print "Testing Accuracy:", acc2
         if acc1 == acc2:

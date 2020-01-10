@@ -90,6 +90,50 @@ else:
     sys.stdout.write("\rRunning injections_cnn_mnist test... Failed\n")
     sys.stdout.flush()
 
+import injections_linear_regression
+sys.stdout.write("Running injections_linear_regression test...")
+sys.stdout.flush()
+if injections_linear_regression.run_test(suppress_out=True):
+    sys.stdout.write("\rRunning injections_linear_regression test... Passed\n")
+    sys.stdout.flush()
+else:
+    failed_tests.append("injections_linear_regression.py")
+    sys.stdout.write("\rRunning injections_linear_regression test... Failed\n")
+    sys.stdout.flush()
+
+import injections_gradient
+sys.stdout.write("Running injections_gradient test...")
+sys.stdout.flush()
+if injections_gradient.run_test(suppress_out=True):
+    sys.stdout.write("\rRunning injections_gradient test... Passed\n")
+    sys.stdout.flush()
+else:
+    failed_tests.append("injections_gradient.py")
+    sys.stdout.write("\rRunning injections_gradient test... Failed\n")
+    sys.stdout.flush()
+
+import injections_logistic_regression
+sys.stdout.write("Running injections_logistic_regression test...")
+sys.stdout.flush()
+if injections_logistic_regression.run_test(suppress_out=True):
+    sys.stdout.write("\rRunning injections_logistic_regression test... Passed\n")
+    sys.stdout.flush()
+else:
+    failed_tests.append("injections_logistic_regression.py")
+    sys.stdout.write("\rRunning injections_logistic_regression test... Failed\n")
+    sys.stdout.flush()
+
+import injections_loss
+sys.stdout.write("Running injections_loss test...")
+sys.stdout.flush()
+if injections_loss.run_test(suppress_out=True):
+    sys.stdout.write("\rRunning injections_loss test... Passed\n")
+    sys.stdout.flush()
+else:
+    failed_tests.append("injections_loss.py")
+    sys.stdout.write("\rRunning injections_loss test... Failed\n")
+    sys.stdout.flush()
+
 # add new test scripts above this line 
 
 print "\n\nAll tests completed"
