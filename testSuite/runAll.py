@@ -134,7 +134,9 @@ else:
     sys.stdout.write("\rRunning injections_loss test... Failed\n")
     sys.stdout.flush()
 
-# add new test scripts above this line 
+# ------------------------------------
+# add new test scripts above this line
+# ------------------------------------ 
 
 print "\n\nAll tests completed"
 if len(failed_tests) == 0:
