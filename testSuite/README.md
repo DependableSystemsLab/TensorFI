@@ -8,7 +8,7 @@ Only stable and functioning test scripts are included in this suite.
 
 ## How to add a new test script
 
-Individual test scripts are called from the [runAll.py](runAll.py) script. The test script should return a boolean to indicate that the test either passed (True) or failed (False). It is recommended to suppress the output from the individual test scripts when running from [runAll.py](runAll.py), see some of the currently implemented tests for reference. Please refer to the other tests called in [runAll.py](runAll.py) for how to structure the code that calls the added test script.
+Individual test scripts are called from the [runAll.py](runAll.py) script. The test script should return a boolean to indicate that the test either passed (True) or failed (False). It is recommended to suppress the output from the individual test scripts when running from [runAll.py](runAll.py), see some of the currently implemented tests for reference. Please refer to [REFERENCE_empty_test_script](REFERENCE_empty_test_script) for how to structure the code that calls the added test script. 
 
 ## When adding support for a new Operation in TensorFI
 
