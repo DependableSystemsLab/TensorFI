@@ -9,3 +9,9 @@ A: Developed the scripts for the experiments and collected experimental data
 N: Zitao Chen
 A: Updated the documentation for TensorFI and tested it on different platforms
 A: Added support for CNNs and other complex operators in TensorFlow, and bit-flips
+
+N: Niranjahna Narayanan
+A: Added support for different fault injection modes, and fixed bugs
+
+N: Lucas Palazzi
+A: Added test suite and automation for installation
