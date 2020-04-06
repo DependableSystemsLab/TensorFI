@@ -864,12 +864,6 @@ def injectFaultRandomUniformInt(a):
 	logging.debug("Calling Operator RandomUniformInt")
 	raise NotImplementedError("RandomUniformInt")
 
-def injectFaultRandomUniform(a):
-	"Function to call injectFault on Random Uniform"
-	# FIXME: Implement this functionality
-	logging.debug("Calling Operator RandomUniform")
-	raise NotImplementedError("RandomUniform")
-	
 def injectFaultRandomStandardNormal(a):
 	"Function to call injectFault on Random Standard Normal"
 	# FIXME: Implement this functionality
