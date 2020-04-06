@@ -106,7 +106,7 @@ def run_test(suppress_out=False):
         print "Accuracy:" + str(acc)
         
         # Instrument the graph for fault injection 
-        fi = ti.TensorFI(sess, name = "linearReg", logLevel = 30, disableInjections = True, logDir=logDir)
+        fi = ti.TensorFI(sess, name = "linearReg", disableInjections = True, logDir=logDir)
         
         # Calculate accuracy (with no fault injections)
         acc_no = numpy.around(sess.run(accuracy, feed_dict={X: test_X, Y: test_Y})[0], decimals=7)
