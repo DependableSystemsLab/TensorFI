@@ -18,7 +18,7 @@ from math import ceil, floor
 
 class TensorFI:
 	"This is the master tensorFI class which has the externally callable functions"
-	
+
 	# This is a closure so it can remember the oldRun function and also keep a cache
 	def monkeyPatch(self, oldRun, maintainCache = True):
 		"Modify the graph and the session to call the corresponding fi nodes upon a run"
@@ -164,7 +164,7 @@ class TensorFI:
 	def __init__(self, s,	# This is the session from tensorFlow 
 			configFileName = "confFiles/default.yaml",	# Config file for reading fault configuration 
 			logDir = "faultLogs/",				# Log directory for the Fault log (Not to be confused with the logging level below)
-			logLevel = logging.DEBUG,			# Logging level {DEBUG=10, INFO=20, ERROR=30}
+			logLevel = logging.ERROR,			# Logging level {DEBUG=10, INFO=20, ERROR=30}
 			disableInjections = False,			# Should we disable injections after instrumenting ?
 			name = "NoName", 				# The name of the injector, used in statistics and logging
 			fiPrefix = "fi_"):				# Prefix to attach to each node inserted for fault injection
@@ -172,7 +172,7 @@ class TensorFI:
 		 
 		self.session = s
 		self.name = name
-
+            
 		# Setup the logging level for debug messages
 		logging.basicConfig()
                 self.setLogLevel(logLevel)
@@ -180,7 +180,7 @@ class TensorFI:
 	
 		# Read the config file parameters from the configuration file
 		# If the configFileName is None, it'll use defalt parameters
-		logging.info("Initializing the injector")
+                logging.info("Initializing the injector: " + self.name);
 		fiParams = configFaultParams(configFileName)
 	
 		# Modify the entire graph to insert the FI nodes - store in fiMap
