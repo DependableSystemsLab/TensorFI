@@ -12,6 +12,11 @@ details on how TensorFI works, how to use or modify it for your purposes,
 how to contribute and licensing information, please refer our
 [Wiki](https://github.com/DependableSystemsLab/TensorFI/wiki).
 
+If you find TensorFI useful, please cite the following paper: *TensorFI: A Flexible Fault Injection Framework for TensorFlow Applications, Zitao Chen, Niranjhana Narayanan, Bo Fang, Guanpeng Li, Karthik Pattabiraman, Nathan DeBardeleben,  arXiv:2004.01743"
+
+Find a copy of the TensorFI paper [here]https://arxiv.org/abs/2004.01743).
+
+
 
 **Updates: 2019-07**
 
@@ -184,6 +189,3 @@ are saved under the Tests/Images sub-directory.
    **NOTE:** Both use the matplotlib and the python-tk libraries
       so you'll need to install the libraries for the demo.
 
-If you find TensorFI useful, please cite the following paper: *"TensorFI: A configurable fault injector for TensorFlow Applications", Guanpeng Li, Karthik Pattabiraman and Nathan DeBardeleben, 8th IEEE International Workshop on Software Certification (WoSoCER), 2018.*
-
-Find a copy of the TensorFI paper [here](http://blogs.ubc.ca/karthik/files/2018/08/TensorFI-Camera-Ready.pdf).
