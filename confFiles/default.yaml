@@ -13,7 +13,7 @@
 #   5) bitFlip-element - single bit-flip over one data item in the output of the target op
 #   6) bitFlip-tensor - single bit-flip over all data items in the output of the target op 
 ScalarFaultType: None
-TensorFaultType: bitFlip-element 
+TensorFaultType: None
 
 
 # Add the list of Operations and their probabilities here

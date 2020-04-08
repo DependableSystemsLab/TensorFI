@@ -24,7 +24,7 @@ TensorFaultType: bitFlip-element
 
 Ops:
 # Choose operations which you want to inject
-  - ALL = 1.0 # Chooses ADD
+  - ALL = 1.0 # Chooses ALL
 #  - LRN = 1.0 # Choose one operation only; 
 # - EQUAL = 1.0
 #  - SOFT-MAX = 1.0
