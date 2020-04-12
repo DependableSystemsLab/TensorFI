@@ -180,6 +180,7 @@ def condPerturb(op, res):
 		
 		# If the operation exceeds the number of times it is to be skipped (default=0)
 		if (count > fiConf.skipCount):	
+                        logging.info("Injecting fault at count = " + count)    
 
  			"(1) inject faults based on the error rate"
 			if(fiConf.injectMode == "errorRate" ):
