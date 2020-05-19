@@ -174,3 +174,24 @@ def bitTensor ( dtype, val):
 	val = val.reshape(valShape)
 	return dtype.type( val )
 
+def bitMultiScalar( dtype, val ):
+	"Flip multiple bits of the scalar value"   
+	fiConf = injectFault.getFIConfig()
+	for x in range(fiConf.bitCount):
+		randomBitFlip(val)
+	return dtype.type( val )
+
+def bitMultiTensor( dtype, val):
+	"Flip ont bit of a random element in a tensor"
+	fiConf = injectFault.getFIConfig()
+	# flatten the tensor into a vector and then restore the original shape in the end
+	valShape = val.shape
+	val = val.flatten()
+	# select multiple random data items in the data space for injection
+	list = np.random.sample(range(len(val)), fiConf.bitCount)
+	for index in list:
+		val[index] = randomBitFlip(val[index])	
+	val = val.reshape(valShape)
+
+	return dtype.type( val )
+

@@ -85,6 +85,6 @@ with tf.Session() as sess:
     logWriter = tf.summary.FileWriter( logs_path, sess.graph )
 
     # Calculate accuracy (with fault injections)
-    fi.turnOnInjections()	
+    fi.turnOnInjections()
     print("Accuracy (with injections):", accuracy.eval({x: mnist.test.images, y: mnist.test.labels}))
 
