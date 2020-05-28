@@ -168,9 +168,8 @@ def condPerturb(op, res):
 	global configInst
 	global fiParamsGbl
 
-	print "outside"	
 	if (configInst):
-		print "inside"
+		# Updates instance if in instance mode
 		fiConf.updateInstance(op, fiParamsGbl)
 
 	faultLog = getCurrentFaultLog()	# Get the fault log for the current thread

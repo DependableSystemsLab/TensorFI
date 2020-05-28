@@ -257,7 +257,7 @@ class FIConfig(object):
 				if (self.opInstance[ op ] <= 0):
 					self.opInstance[ op ] = 1
 					instances[ op ] = 1
-				# Finally, add the operation to the injectMap
+				# Finally, add 1 instance to the inject map
 				self.opInstance[ op ] = self.opInstance[ op ] + 1
 				for i in range(len(instances)):
 					if instances[ i ] == op:
@@ -265,6 +265,7 @@ class FIConfig(object):
 						print(instance[ i ] + self.opInstance[ op ])
 	
 	def resetConfig(self, confFile):
+		# resets the inject map to recount the instances
 		instances = confFile['Instances']
 		for op in Ops:
 			self.opInstance[ op ] = 0
