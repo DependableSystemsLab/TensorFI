@@ -1,3 +1,4 @@
+
 # Fault injection configuration information: this is used for the global fault injector
 from enum import Enum
 import numpy as np
@@ -199,9 +200,7 @@ class FIConfig(object):
 		else:
 			# in this case, there will be no injection
 			self.injectMode = "None"
-
-		# Next configure the number of bits to flip if the fault type is multiBitFlip
-		# Default value is none
+		
 		if fiParams.has_key(Fields.BitCount.value) and (faultTypeTensor == "multiBitFlip" or faultTypeScalar == "multiBitFlip"):
 			self.bitCount = np.int32(fiParams[Fields.BitCount.value])
 		else:
@@ -249,6 +248,30 @@ class FIConfig(object):
 		else:
 			self.skipCount = 0
 	# End of constructor
+	
+	def updateInstance(self, op, confFile):
+		instances = confFile['Instances']
+		for op in Ops:
+			if op.value == opType:
+				# Check if the instance is a sane value
+				if (self.opInstance[ op ] <= 0):
+					self.opInstance[ op ] = 1
+					instances[ op ] = 1
+				# Finally, add the operation to the injectMap
+				self.opInstance[ op ] = self.opInstance[ op ] + 1
+				for i in range(len(instances)):
+					if instances[ i ] == op:
+						instance[ i ][ op ] = self.opInstance[ op ]
+						print(instance[ i ] + self.opInstance[ op ])
+	
+	def resetConfig(self, confFile):
+		instances = confFile['Instances']
+		for op in Ops:
+			self.opInstance[ op ] = 0
+			for i in range(len(instances)):
+				if instances[ i ] == op:
+					instance[ i ][ op ] = self.opInstance[ op ]
+					print(instance[ i ] + self.opInstance[ op ])
 
 # End of class FIConfig
 
