@@ -13,11 +13,11 @@
 #   5) bitFlip-element - single bit-flip over one data item in the output of the target op
 #   6) bitFlip-tensor - single bit-flip over all data items in the output of the target op 
 #   7) multiBitFlip - multiple bit-flips over all data items in the output of the target op
-ScalarFaultType: None
+ScalarFaultType: multiBitFlip
 TensorFaultType: multiBitFlip
 
 # Number of bits to flip for each data item
-BitCount: 0
+BitCount: 5
 
 
 # Add the list of Operations and their probabilities here
@@ -43,14 +43,6 @@ Ops:
 # This is required when you want to specify which operator to inject (e.g., the second Conv operator).
 # Below is an example, you need to specify the numbers according to your model.
 Instances: 
-  - CONV2D = 2   # This means there are two conv2d operations in the model
-  - MAX-POOL = 2
-  - RELU = 3
-  - BIASADD = 2
-  - RESHAPE = 1
-  - ADD = 3
-  - MATMUL = 3 
-
 
 
 # There are three inject mode:

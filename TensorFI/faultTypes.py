@@ -177,9 +177,62 @@ def bitTensor ( dtype, val):
 def bitMultiScalar( dtype, val ):
 	"Flip multiple bits of the scalar value"   
 	fiConf = injectFault.getFIConfig()
-	for x in range(fiConf.bitCount):
-		randomBitFlip(val)
-	return dtype.type( val )
+	
+	def getBinary(number):
+		# integer data type
+		if(floor(number) == number):
+			integer = bin(int(number)).lstrip("0b") 
+			# 21 digits for integer
+			integer = integer.zfill(21)
+			# integer has no mantissa
+			dec = ''	
+		# float point datatype 						
+		else:
+			binVal = float2bin(number)				
+			# split data into integer and decimal part	
+			integer, dec = binVal.split(".")	
+		return integer, dec
+
+	# we use a tag for the sign of negative val, and then consider all values as positive values
+	# the sign bit will be tagged back when finishing bit flip
+	negTag = 1
+	if(str(val)[0]=="-"):
+		negTag=-1
+
+	if(isinstance(val, np.bool_)):	
+		# boolean value
+		return bool( (val+1)%2 )
+	else:	
+		# turn the val into positive val
+		val = abs(val)
+		integer, dec = getBinary(val)
+
+	intLength = len(integer)
+	decLength = len(dec)
+
+	# random index of the bit to flip  
+	list = np.random.sample(range(intLength + decLength), fiConf.bitCount)
+	
+	for index in list:
+		# flip the sign bit (optional)
+		#if(index==-1):
+		#	return val*negTag*(-1)
+
+		# bit to flip at the integer part
+		if(index < intLength):		
+			# bit flipped from 1 to 0, thus minusing the corresponding value
+			if(integer[index] == '1'):	val -= pow(2 , (intLength - index - 1))  
+			# bit flipped from 0 to 1, thus adding the corresponding value
+			else:						val += pow(2 , (intLength - index - 1))
+		# bit to flip at the decimal part  
+		else:						
+			index = index - intLength 	  
+			# bit flipped from 1 to 0, thus minusing the corresponding value
+			if(dec[index] == '1'):	val -= 2 ** (-index-1)
+			# bit flipped from 0 to 1, thus adding the corresponding value
+			else:					val += 2 ** (-index-1) 
+
+	return val*negTag
 
 def bitMultiTensor( dtype, val):
 	"Flip ont bit of a random element in a tensor"
