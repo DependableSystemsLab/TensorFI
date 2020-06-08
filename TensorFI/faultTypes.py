@@ -210,9 +210,10 @@ def bitMultiScalar( dtype, val ):
 	intLength = len(integer)
 	decLength = len(dec)
 
-	# random index of the bit to flip  
+	# random indices of the bits to flip  
 	list = np.random.sample(range(intLength + decLength), fiConf.bitCount)
 	
+	# iterate through the list
 	for index in list:
 		# flip the sign bit (optional)
 		#if(index==-1):
@@ -235,7 +236,7 @@ def bitMultiScalar( dtype, val ):
 	return val*negTag
 
 def bitMultiTensor( dtype, val):
-	"Flip ont bit of a random element in a tensor"
+	"Flip multiple bits of a random element in a tensor"
 	fiConf = injectFault.getFIConfig()
 	# flatten the tensor into a vector and then restore the original shape in the end
 	valShape = val.shape
