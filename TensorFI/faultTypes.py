@@ -104,7 +104,6 @@ def randomBitFlip(val):
 			integer, dec = binVal.split(".")	
 		return integer, dec
 
-	# we use a tag for the sign of negative val, and then consider all values as positive values
 	# the sign bit will be tagged back when finishing bit flip
 	negTag = 1
 	if(str(val)[0]=="-"):
@@ -209,9 +208,15 @@ def bitMultiScalar( dtype, val ):
 
 	intLength = len(integer)
 	decLength = len(dec)
+	
+	try:
+		assert fiConf.bitCount > intLength + decLength + 1
+	except:
+		logging.info("Number of bits larger than bits availible to flip")
+		fiConf.bitCount = intLength + decLength + 1
 
 	# random indices of the bits to flip  
-	list = np.random.sample(range(intLength + decLength), fiConf.bitCount)
+	list = np.random.sample(range(-1, intLength + decLength), fiConf.bitCount)
 	
 	# iterate through the list
 	for index in list:
@@ -223,6 +228,7 @@ def bitMultiScalar( dtype, val ):
 		if(index < intLength):		
 			# bit flipped from 1 to 0, thus minusing the corresponding value
 			if(integer[index] == '1'):	val -= pow(2 , (intLength - index - 1))  
+			# bit flipped from 0 to 1, thus adding the corresponding value
 			# bit flipped from 0 to 1, thus adding the corresponding value
 			else:						val += pow(2 , (intLength - index - 1))
 		# bit to flip at the decimal part  
@@ -242,6 +248,13 @@ def bitMultiTensor( dtype, val):
 	valShape = val.shape
 	val = val.flatten()
 	# select multiple random data items in the data space for injection
+	try:
+		assert fiConf.bitCount > len(val)
+	except:
+		logging.info("Number of bits larger than bits availible to flip")
+		fiConf.bitCount = len(val)
+
+
 	list = np.random.sample(range(len(val)), fiConf.bitCount)
 	for index in list:
 		val[index] = randomBitFlip(val[index])	

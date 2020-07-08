@@ -107,20 +107,11 @@ def run_test(suppress_out=False):
         
         # Instrument the graph for fault injection 
         fi = ti.TensorFI(sess, name = "linearReg", logLevel = 30, disableInjections = True, logDir=logDir)
-        
-        # Calculate accuracy (with no fault injections)
-        acc_no = numpy.around(sess.run(accuracy, feed_dict={X: test_X, Y: test_Y})[0], decimals=7)
-        print "Accuracy (no injections): " + str(acc_no)
 
-        # Calculate accuracy (with fault injections)
-        fi.turnOnInjections()
-        acc_fi = numpy.around(sess.run(accuracy, feed_dict={X: test_X, Y: test_Y})[0], decimals=7)
-        print "Accuracy (with injections):" + str(acc_fi)
-	
-	fi.turnOffInjections()
+        # Calculate accuracy (with config)
 	fi.turnOnConfig()
-        acc_fi = numpy.around(sess.run(accuracy, feed_dict={X: test_X, Y: test_Y})[0], decimals=7)
-        print "Accuracy (config):" + str(acc_fi)
+        acc_no = numpy.around(sess.run(accuracy, feed_dict={X: test_X, Y: test_Y})[0], decimals=7)
+        print "Accuracy (config):" + str(acc_no)
 	fi.turnOffConfig()
 
         fi.turnOnInjections()

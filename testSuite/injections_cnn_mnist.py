@@ -157,10 +157,10 @@ def run_test(suppress_out=False):
 
         # Add the fault injection code here to instrument the graph
         fi = ti.TensorFI(sess, name = "convolutional", disableInjections=True, logDir=logDir)
-	#fi.turnOnConfig
-	#acc2 = sess.run(accuracy, feed_dict={X: mnist.test.images[:256], Y: mnist.test.labels[:256], keep_prob: 1.0})
-        #print "Accuracy (config):", acc2
-	#fi.turnOffConfig
+	fi.turnOnConfig
+	acc2 = sess.run(accuracy, feed_dict={X: mnist.test.images[:256], Y: mnist.test.labels[:256], keep_prob: 1.0})
+        print "Accuracy (config):", acc2
+	fi.turnOffConfig
 
 	fi.turnOnInjections
         acc2 = sess.run(accuracy, feed_dict={X: mnist.test.images[:256], Y: mnist.test.labels[:256], keep_prob: 1.0})

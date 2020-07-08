@@ -36,8 +36,6 @@ def initFIConfig(fiParams):
 	# which op to be injected in the whole run
 	global injectedOp
 	
-	global configInst
-	
 	global fiParamsGbl
 
 	fiConf = FIConfig(fiParams)
@@ -53,7 +51,7 @@ def initFIConfig(fiParams):
 	randInstanceMap = {}
 	totalVistedOp = 0
 	injectedOp = 0
-	configInst = False
+	fiConf.configOff(fiParams)
 	fiParamsGbl = fiParams
 	return fiConf
 
@@ -165,10 +163,9 @@ def condPerturb(op, res):
 	# Pre-condition: injectMap != None && skipCount != None 
 	global count	# Keeps track of how many times the selected operation(s) are executed
 	global visitedOp
-	global configInst
 	global fiParamsGbl
 
-	if (configInst):
+	if fiConf.configFault(fiParamsGbl):
 		# Updates instance if in instance mode
 		fiConf.updateInstance(op, fiParamsGbl)
 
@@ -1220,14 +1217,13 @@ opTable = {
 		
 def turnOffConfigFault():
 	"Turn off auto-configuration globally"
-	global configInst
-	configInst = False
+	global fiParamsGbl 
+	fiConf.configOff(fiParamsGbl)
 
 def turnOnConfigFault():
 	"Turn on auto-configuration globally"
-	global configInst
 	global fiParamsGbl
-	configInst = True
+	fiConf.configOn(fiParamsGbl)
 	fiConf.resetConfig(fiParamsGbl)
 
 

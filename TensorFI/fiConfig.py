@@ -218,7 +218,7 @@ class FIConfig(object):
 			if not opsList==None:
 				for element in opsList:
 					(opType, prob) = element.split('=')
-					self.faultConfigOp(opType.rstrip(), prob.lstrip())
+				self.faultConfigOp(opType.rstrip(), prob.lstrip())
 
 		# Configure the instances of each operation 
 		self.opInstance = { }
@@ -250,30 +250,66 @@ class FIConfig(object):
 	# End of constructor
 	
 	def updateInstance(self, op, confFile):
+		global fileName
 		instances = confFile['Instances']
-		for op in Ops:
-			if op.value == opType:
-				# Add the operation to the injectMap
-				self.opInstance[ op ] = self.opInstance[ op ] + 1
-				# Add the operation to the config file
-				if not instances:
-					instances = [ op ]
-				if op not in instances:
-					instances.append[ op ]
-				for i in range(len(instances)):
-					if instances[ i ] == op:
-						instance[ i ][ op ] = self.opInstance[ op ]
-					
+		# Add the operation to the injectMap
+		self.totalInstance = self.totalInstance + 1
+		self.opInstance[ op ] = self.opInstance[ op ] + 1
+		# Add the operation to the config file
+		found = False
+		for i in range(len(instances)):
+			(opType, instance) = instances[i].split(' = ')
+			if opType == op.value:
+				instances[i] = op.value + ' = ' + str(self.opInstance[ op ])
+				found = True
+		if not found:
+			instances.append(op.value + ' = ' + str(self.opInstance[ op ]))
+
+		f = open(fileName, 'w')
+		try:
+			yaml.dump(confFile, f)
+		finally:
+			f.close()
 	
 	def resetConfig(self, confFile):
+		global fileName
 		instances = confFile['Instances']
 		# Set all the instances in the yaml file to 0
+		self.totalInstance = 0
 		for op in Ops:
 			self.opInstance[ op ] = 0
-			if instances:
-				for i in range(len(instances)):
-					if instances[ i ] == op:
-						instance[ i ][ op ] = self.opInstance[ op ]
+		if not instances:
+			instances = op.value + ' = 0'
+		for i in range(len(instances)):
+			(opType, instance) = instances[i].split(' = ')	
+			instances[i] = opType + ' = 0'
+
+		f = open(fileName, 'w')
+		try:
+			yaml.dump(confFile, f)
+		finally:
+			f.close()
+
+	def configOn(self, confFile):
+		confFile['ConfigInst'] = True
+		f = open(fileName, 'w')
+		try:
+			yaml.dump(confFile, f)
+		finally:
+			f.close()
+		#FIConfig.configInst[0] = True
+	
+	def configOff(self, confFile):
+		confFile['ConfigInst'] = True
+		f = open(fileName, 'w')
+		try:
+			yaml.dump(confFile, f)
+		finally:
+			f.close()
+		#FIConfig.configInst[0] = False
+
+	def configFault(self, confFile):
+		return confFile['ConfigInst']
 
 # End of class FIConfig
 
@@ -306,6 +342,8 @@ def yamlFaultParams(pStream):
 	return params
 
 def configFaultParams(paramFile = None):
+	global fileName
+	fileName = paramFile
 	"Return the fault params from different files"
 	if paramFile == None:
 		return staticFaultParams()
