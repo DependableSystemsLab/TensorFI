@@ -252,6 +252,7 @@ class FIConfig(object):
 	def updateInstance(self, op, confFile):
 		global fileName
 		instances = confFile['Instances']
+<<<<<<< HEAD
 		# Add the operation to the injectMap
 		self.totalInstance = self.totalInstance + 1
 		self.opInstance[ op ] = self.opInstance[ op ] + 1
@@ -270,12 +271,30 @@ class FIConfig(object):
 			yaml.dump(confFile, f)
 		finally:
 			f.close()
+=======
+		for op in Ops:
+			if op.value == opType:
+				# Add the operation to the injectMap
+				self.opInstance[ op ] = self.opInstance[ op ] + 1
+				# Add the operation to the config file
+				if not instances:
+					instances = [ op ]
+				if op not in instances:
+					instances.append[ op ]
+				for i in range(len(instances)):
+					if instances[ i ] == op:
+						instance[ i ][ op ] = self.opInstance[ op ]
+					
+>>>>>>> b04b4dae973e202bb0b469eca2f0a5ba08ef3954
 	
 	def resetConfig(self, confFile):
 		global fileName
 		instances = confFile['Instances']
 		# Set all the instances in the yaml file to 0
+<<<<<<< HEAD
 		self.totalInstance = 0
+=======
+>>>>>>> b04b4dae973e202bb0b469eca2f0a5ba08ef3954
 		for op in Ops:
 			self.opInstance[ op ] = 0
 		if not instances:

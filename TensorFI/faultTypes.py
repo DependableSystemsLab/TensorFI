@@ -208,6 +208,7 @@ def bitMultiScalar( dtype, val ):
 
 	intLength = len(integer)
 	decLength = len(dec)
+<<<<<<< HEAD
 	
 	try:
 		assert fiConf.bitCount > intLength + decLength + 1
@@ -218,6 +219,12 @@ def bitMultiScalar( dtype, val ):
 	# random indices of the bits to flip  
 	list = np.random.sample(range(-1, intLength + decLength), fiConf.bitCount)
 	
+=======
+
+	# random indices of the bits to flip  
+	list = np.random.sample(range(intLength + decLength), fiConf.bitCount)
+	
+>>>>>>> b04b4dae973e202bb0b469eca2f0a5ba08ef3954
 	# iterate through the list
 	for index in list:
 		# flip the sign bit (optional)
