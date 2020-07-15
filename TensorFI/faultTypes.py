@@ -121,13 +121,12 @@ def randomBitFlip(val):
 	intLength = len(integer)
 	decLength = len(dec)
 
-	# random index of the bit to flip (switch to low=0 if you don't want to inject fault to sign bit)
-	index = np.random.randint(low=-1 , high = intLength + decLength)
+	# random index of the bit to flip  
+	index = np.random.randint(low=0 , high = intLength + decLength)
  
- 	# injection index -1 is to flip the sign bit 
-
-	if(index==-1):
-		return val*negTag*(-1)
+ 	# flip the sign bit (optional)
+	#if(index==-1):
+	#	return val*negTag*(-1)
 
 	# bit to flip at the integer part
 	if(index < intLength):		
@@ -173,5 +172,86 @@ def bitTensor ( dtype, val):
 	for i in range(len(val)):
 		val[i] = randomBitFlip(val[i])
 	val = val.reshape(valShape)
+	return dtype.type( val )
+
+def bitMultiScalar( dtype, val ):
+	"Flip multiple bits of the scalar value"   
+	fiConf = injectFault.getFIConfig()
+	
+	def getBinary(number):
+		# integer data type
+		if(floor(number) == number):
+			integer = bin(int(number)).lstrip("0b") 
+			# 21 digits for integer
+			integer = integer.zfill(21)
+			# integer has no mantissa
+			dec = ''	
+		# float point datatype 						
+		else:
+			binVal = float2bin(number)				
+			# split data into integer and decimal part	
+			integer, dec = binVal.split(".")	
+		return integer, dec
+
+	# we use a tag for the sign of negative val, and then consider all values as positive values
+	# the sign bit will be tagged back when finishing bit flip
+	negTag = 1
+	if(str(val)[0]=="-"):
+		negTag=-1
+
+	if(isinstance(val, np.bool_)):	
+		# boolean value
+		return bool( (val+1)%2 )
+	else:	
+		# turn the val into positive val
+		val = abs(val)
+		integer, dec = getBinary(val)
+
+	intLength = len(integer)
+	decLength = len(dec)
+	
+	try:
+		assert fiConf.bitCount > intLength + decLength + 1
+	except:
+		logging.info("Number of bits larger than bits availible to flip")
+		fiConf.bitCount = intLength + decLength + 1
+
+	# random indices of the bits to flip  
+	list = np.random.sample(range(-1, intLength + decLength), fiConf.bitCount)
+	
+	# iterate through the list
+	for index in list:
+		# flip the sign bit (optional)
+		#if(index==-1):
+		#	return val*negTag*(-1)
+
+		# bit to flip at the integer part
+		if(index < intLength):		
+			# bit flipped from 1 to 0, thus minusing the corresponding value
+			if(integer[index] == '1'):	val -= pow(2 , (intLength - index - 1))  
+			# bit flipped from 0 to 1, thus adding the corresponding value
+			else:						val += pow(2 , (intLength - index - 1))
+		# bit to flip at the decimal part  
+		else:						
+			index = index - intLength 	  
+			# bit flipped from 1 to 0, thus minusing the corresponding value
+			if(dec[index] == '1'):	val -= 2 ** (-index-1)
+			# bit flipped from 0 to 1, thus adding the corresponding value
+			else:					val += 2 ** (-index-1) 
+
+	return val*negTag
+
+def bitMultiTensor( dtype, val):
+	"Flip multiple bits of a random element in a tensor"
+	fiConf = injectFault.getFIConfig()
+	# flatten the tensor into a vector and then restore the original shape in the end
+	valShape = val.shape
+	val = val.flatten()
+	# select multiple random data items in the data space for injection
+	list = np.random.sample(range(len(val)), fiConf.bitCount)
+	for index in list:
+		val[index] = randomBitFlip(val[index])	
+	val = val.reshape(valShape)
+
 	return dtype.type( val )
 

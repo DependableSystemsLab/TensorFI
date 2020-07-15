@@ -1,3 +1,4 @@
+
 # Fault injection configuration information: this is used for the global fault injector
 from enum import Enum
 import numpy as np
@@ -69,12 +70,14 @@ class FaultTypes(Enum):
 	ELEM = "Rand-element"
 	ELEMbit = "bitFlip-element"
 	RANDbit = "bitFlip-tensor" 
+	MULTIbit = "multiBitFlip"
 # End of FaultTypes
 
 # These are the list of supported Fields below (if you add a new Field, please add it here)
 class Fields(Enum):
 	ScalarFaultType = "ScalarFaultType"
 	TensorFaultType = "TensorFaultType"
+	BitCount = "BitCount"
 	Ops = "Ops"
 	Seed = "Seed"
 	SkipCount = "SkipCount"
@@ -94,7 +97,8 @@ class FIConfig(object):
 		FaultTypes.ZERO.value : (zeroScalar, zeroTensor),
 		FaultTypes.ELEM.value : (randomElementScalar, randomElementTensor),
 		FaultTypes.ELEMbit.value : (bitElementScalar, bitElementTensor),
-		FaultTypes.RANDbit.value : (bitScalar, bitTensor)
+		FaultTypes.RANDbit.value : (bitScalar, bitTensor),
+		FaultTypes.MULTIbit.value : (bitMultiScalar, bitMultiTensor)
 	}
 
 	def faultConfigType(self, faultTypeScalar, faultTypeTensor):
@@ -168,6 +172,7 @@ class FIConfig(object):
 		res = [ "FIConfig: {" ]
 		res.append("\tfaultTypeScalar : " + str(self.faultTypeScalar) )
 		res.append("\tfaultTypeTensor : " + str(self.faultTypeTensor) )
+		res.append("\tbitCount : " + str(self.bitCount) )
 		res.append("\tinjectMap : "  + str(self.injectMap) )
 		res.append("\tfaultSeed : " + str(self.faultSeed) )
 		res.append("\tskipCount : " + str(self.skipCount) )
@@ -195,7 +200,12 @@ class FIConfig(object):
 		else:
 			# in this case, there will be no injection
 			self.injectMode = "None"
-
+		
+		if fiParams.has_key(Fields.BitCount.value) and (faultTypeTensor == "multiBitFlip" or faultTypeScalar == "multiBitFlip"):
+			self.bitCount = np.int32(fiParams[Fields.BitCount.value])
+		else:
+			self.bitCount = None  
+		
 		# Finally, call the faultConfigtype function with the parameters	
 		self.faultConfigType(faultTypeScalar, faultTypeTensor)
 	
@@ -227,7 +237,7 @@ class FIConfig(object):
 		# Confligre the seed value if one is specified
 		# default value is none (so it's non-deterministic)
 		if fiParams.has_key(Fields.Seed.value):
-			self.faultSeed = np.int32(fiParams[Fields.Seed.value])		
+			self.faultSeed = np.int32(fiParams[Fields.Seed.value])
 		else:
 			self.faultSeed = None  
 
@@ -238,6 +248,74 @@ class FIConfig(object):
 		else:
 			self.skipCount = 0
 	# End of constructor
+		
+	def updateInstance(self, op, confFile):
+		global fileName
+		instances = confFile['Instances']
+		# Add the operation to the injectMap
+		self.totalInstance = self.totalInstance + 1
+		self.opInstance[ op ] = self.opInstance[ op ] + 1
+		# Add the operation to the config file
+		found = False
+		for i in range(len(instances)):
+			(opType, instance) = instances[i].split(' = ')
+			if opType == op.value:
+				instances[i] = op.value + ' = ' + str(self.opInstance[ op ])
+				found = True
+		if not found:
+			instances.append(op.value + ' = ' + str(self.opInstance[ op ]))
+
+		confFile['Instances'] = instances
+		f = open(fileName, 'w')
+		try:
+			yaml.dump(confFile, f)
+		finally:
+			f.close()
+
+	def resetConfig(self, confFile):
+		global fileName
+		instances = confFile['Instances']
+		# Set all the instances in the yaml file to 0
+
+		self.totalInstance = 0
+
+		for op in Ops:
+			self.opInstance[ op ] = 0
+		if instances is None:	
+			instances = []
+		for i in range(len(instances)):
+			(opType, instance) = instances[i].split(' = ')	
+			instances[i] = opType + ' = 0'
+
+		confFile['Instances'] = instances
+		f = open(fileName, 'w')
+		try:
+			yaml.dump(confFile, f)
+		finally:
+			f.close()
+
+	def configOn(self, confFile):
+		global fileName
+		confFile['ConfigInst'] = True
+		f = open(fileName, 'w')
+		try:
+			yaml.dump(confFile, f)
+		finally:
+			f.close()
+		#FIConfig.configInst[0] = True
+
+	def configOff(self, confFile):
+		global fileName
+		confFile['ConfigInst'] = True
+		f = open(fileName, 'w')
+		try:
+			yaml.dump(confFile, f)
+		finally:
+			f.close()
+		#FIConfig.configInst[0] = False
+
+	def configFault(self, confFile):
+		return confFile['ConfigInst']
 
 # End of class FIConfig
 
@@ -271,6 +349,9 @@ def yamlFaultParams(pStream):
 
 def configFaultParams(paramFile = None):
 	"Return the fault params from different files"
+	global fileName
+	fileName = paramFile
+
 	if paramFile == None:
 		return staticFaultParams()
 
