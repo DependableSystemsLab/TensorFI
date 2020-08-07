@@ -12,7 +12,7 @@ details on how TensorFI works, how to use or modify it for your purposes,
 how to contribute and licensing information, please refer our
 [Wiki](https://github.com/DependableSystemsLab/TensorFI/wiki).
 
-If you find TensorFI useful, please cite the following paper: *"TensorFI: A Flexible Fault Injection Framework for TensorFlow Applications, Zitao Chen, Niranjhana Narayanan, Bo Fang, Guanpeng Li, Karthik Pattabiraman, Nathan DeBardeleben,  arXiv:2004.01743".*
+If you find TensorFI useful, please cite the following paper: *"TensorFI: A Flexible Fault Injection Framework for TensorFlow Applications, Zitao Chen, Niranjhana Narayanan, Bo Fang, Guanpeng Li, Karthik Pattabiraman, Nathan DeBardeleben, Proceedings of the IEEE International Symposium on Software Reliability Engineering (ISSRE), 2020.*
 
 Find a copy of the TensorFI paper [here](https://arxiv.org/abs/2004.01743).
 
