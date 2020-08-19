@@ -174,10 +174,10 @@ def bitTensor ( dtype, val):
 	val = val.reshape(valShape)
 	return dtype.type( val )
 
-def bitMultiScalar( dtype, val ):
-	"Flip multiple bits of the scalar value"   
-	fiConf = injectFault.getFIConfig()
-	
+def randomBitMultiFlip(val, count):
+	"Flip a random bit in the data to be injected" 
+
+	# Split the integer part and decimal part in binary expression
 	def getBinary(number):
 		# integer data type
 		if(floor(number) == number):
@@ -209,17 +209,10 @@ def bitMultiScalar( dtype, val ):
 
 	intLength = len(integer)
 	decLength = len(dec)
-	
-	try:
-		assert fiConf.bitCount > intLength + decLength + 1
-	except:
-		logging.info("Number of bits larger than bits availible to flip")
-		fiConf.bitCount = intLength + decLength + 1
 
-	# random indices of the bits to flip  
-	list = np.random.sample(range(-1, intLength + decLength), fiConf.bitCount)
+	# random index of the bit to flip  
+	list = np.random.sample(range(intLength + decLength), count)
 	
-	# iterate through the list
 	for index in list:
 		# flip the sign bit (optional)
 		#if(index==-1):
@@ -241,17 +234,23 @@ def bitMultiScalar( dtype, val ):
 
 	return val*negTag
 
+def bitMultiScalar( dtype, val ):
+	"Flip multiple bits of the scalar value"   
+	fiConf = injectFault.getFIConfig()
+	
+	return dtype.type( randomBitMultiFlip(val, fiConf.bitCount) )
+	
 def bitMultiTensor( dtype, val):
-	"Flip multiple bits of a random element in a tensor"
+	"Flip ont bit of a random element in a tensor"
 	fiConf = injectFault.getFIConfig()
 	# flatten the tensor into a vector and then restore the original shape in the end
 	valShape = val.shape
 	val = val.flatten()
 	# select multiple random data items in the data space for injection
-	list = np.random.sample(range(len(val)), fiConf.bitCount)
-	for index in list:
-		val[index] = randomBitFlip(val[index])	
+	insertList = sorted(np.random.choice(range(len(val), fiConf.bitCount, replace=True)))
+	insertDict = { i : insertList.count(i) for i in insertList }
+	for index in insertDict:
+		val[index] = randomBitMultiFlip(val[index], insertDict[index])
 	val = val.reshape(valShape)
 
 	return dtype.type( val )
-

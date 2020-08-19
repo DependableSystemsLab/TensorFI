@@ -1,15 +1,10 @@
+BitCount: 10
 ConfigInst: true
 InjectMode: dynamicInstance
 Instances:
-- CONV2D = 0
-- MAX-POOL = 0
-- RELU = 0
-- BIASADD = 0
-- RESHAPE = 0
-- ADD = 1
-- MATMUL = 0
 - IDENTITY = 2
 - MUL = 1
+- ADD = 1
 - SUB = 1
 - POW = 1
 - RANK = 1

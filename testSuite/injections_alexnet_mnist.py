@@ -21,7 +21,7 @@ tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.ERROR)
 # set logging folder
 from globals import TESTSUITE_DIR
 logDir   = TESTSUITE_DIR + "/faultLogs/"
-confFile = TESTSUITE_DIR + "/confFiles/injections_config.yaml"
+confFile = TESTSUITE_DIR + "/confFiles/default.yaml"
 
 # Parameters
 learning_rate = 0.001
@@ -155,8 +155,18 @@ def run_test(suppress_out=False):
         acc1 = sess.run(accuracy, feed_dict={x: mnist.test.images[:256], y: mnist.test.labels[:256], keep_prob: 1.})
         print "Testing Accuracy:", acc1
         fi = ti.TensorFI(sess, name = "lenet", disableInjections=False, logDir=logDir)
-        acc2 = sess.run(accuracy, feed_dict={x: mnist.test.images[:256], y: mnist.test.labels[:256], keep_prob: 1.})
-        print "Testing Accuracy:", acc2
+        #acc2 = sess.run(accuracy, feed_dict={x: mnist.test.images[:256], y: mnist.test.labels[:256], keep_prob: 1.})
+        #print "Testing Accuracy:", acc2
+        
+	fi.turnOnConfig()
+        acc2 = sess.run(accuracy, feed_dict={x: mnist.test.images[:256], y: mnist.test.labels[:256], keep_prob: 1.0})
+        print "Accuracy (with injections):", acc2
+        fi.turnOffConfig()
+
+        fi.turnOnInjections()
+        acc2 = sess.run(accuracy, feed_dict={x: mnist.test.images[:256], y: mnist.test.labels[:256], keep_prob: 1.0})
+        print "Accuracy (with injections):", acc2
+ 
         if acc1 == acc2:
             passed_bool = True
         else:

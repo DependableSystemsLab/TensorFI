@@ -1225,6 +1225,5 @@ def turnOnConfigFault():
 	"Turn on auto-configuration globally"
 	global fiParamsGbl
 	fiConf.configOn(fiParamsGbl)
-	fiConf.resetConfig(fiParamsGbl)
 
 

@@ -112,14 +112,15 @@ def run_test(suppress_out=False):
         acc_no = numpy.around(sess.run(accuracy, feed_dict={X: test_X, Y: test_Y})[0], decimals=7)
         print "Accuracy (no injections): " + str(acc_no)
 
+	fi.turnOnInjections()
 	fi.turnOnConfig()
         acc_fi = numpy.around(sess.run(accuracy, feed_dict={X: test_X, Y: test_Y})[0], decimals=7)
         print "Accuracy (config):" + str(acc_fi)
-	fi.turnOffConfig()
+	#fi.turnOffConfig()
 
-        fi.turnOnInjections()
-        acc_fi = numpy.around(sess.run(accuracy, feed_dict={X: test_X, Y: test_Y})[0], decimals=7)
-        print "Accuracy (with injections):" + str(acc_fi)
+        #fi.turnOnInjections()
+        #acc_fi = numpy.around(sess.run(accuracy, feed_dict={X: test_X, Y: test_Y})[0], decimals=7)
+        #print "Accuracy (with injections):" + str(acc_fi)
 
         # Make the log files in TensorBoard	
         logs_path = "./logs"
