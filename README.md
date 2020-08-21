@@ -14,7 +14,7 @@ how to contribute and licensing information, please refer our
 
 If you find TensorFI useful, please cite the following paper: *"TensorFI: A Flexible Fault Injection Framework for TensorFlow Applications, Zitao Chen, Niranjhana Narayanan, Bo Fang, Guanpeng Li, Karthik Pattabiraman, Nathan DeBardeleben, Proceedings of the IEEE International Symposium on Software Reliability Engineering (ISSRE), 2020.*
 
-Find a copy of the TensorFI paper [here](https://arxiv.org/abs/2004.01743).
+Find a copy of the TensorFI paper [here](http://blogs.ubc.ca/karthik/2020/08/14/tensorfi-a-flexible-fault-injection-framework-for-tensorflow-applications/).
 
 
 
