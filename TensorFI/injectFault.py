@@ -1215,15 +1215,6 @@ opTable = {
 			"Unknown": injectFaultGeneric		# Last operation
 			# "Unknown": None			# For debugging purposes
 		}	
-		
-def turnOffConfigFault():
-	"Turn off auto-configuration globally"
-	global fiParamsGbl 
-	fiConf.configOff(fiParamsGbl)
 
-def turnOnConfigFault():
-	"Turn on auto-configuration globally"
-	global fiParamsGbl
-	fiConf.configOn(fiParamsGbl)
 
 
