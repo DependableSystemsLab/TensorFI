@@ -70,14 +70,12 @@ class FaultTypes(Enum):
 	ELEM = "Rand-element"
 	ELEMbit = "bitFlip-element"
 	RANDbit = "bitFlip-tensor" 
-	MULTIbit = "multiBitFlip"
 # End of FaultTypes
 
 # These are the list of supported Fields below (if you add a new Field, please add it here)
 class Fields(Enum):
 	ScalarFaultType = "ScalarFaultType"
 	TensorFaultType = "TensorFaultType"
-	BitCount = "BitCount"
 	Ops = "Ops"
 	Seed = "Seed"
 	SkipCount = "SkipCount"
@@ -98,7 +96,6 @@ class FIConfig(object):
 		FaultTypes.ELEM.value : (randomElementScalar, randomElementTensor),
 		FaultTypes.ELEMbit.value : (bitElementScalar, bitElementTensor),
 		FaultTypes.RANDbit.value : (bitScalar, bitTensor),
-		FaultTypes.MULTIbit.value : (bitMultiScalar, bitMultiTensor)
 	}
 
 	def faultConfigType(self, faultTypeScalar, faultTypeTensor):
@@ -200,11 +197,6 @@ class FIConfig(object):
 		else:
 			# in this case, there will be no injection
 			self.injectMode = "None"
-		
-		if fiParams.has_key(Fields.BitCount.value) and (faultTypeTensor == "multiBitFlip" or faultTypeScalar == "multiBitFlip"):
-			self.bitCount = np.int32(fiParams[Fields.BitCount.value])
-		else:
-			self.bitCount = None  
 		
 		# Finally, call the faultConfigtype function with the parameters	
 		self.faultConfigType(faultTypeScalar, faultTypeTensor)
