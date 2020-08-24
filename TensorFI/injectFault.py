@@ -159,6 +159,12 @@ def condPerturb(op, res):
 	# Pre-condition: injectMap != None && skipCount != None 
 	global count	# Keeps track of how many times the selected operation(s) are executed
 	global visitedOp
+	global configInst
+	global fiParamsGbl
+
+	if fiConf.configFault(fiParamsGbl):
+		# Updates instance if in instance mode
+		fiConf.updateInstance(op, fiParamsGbl)
 
 	faultLog = getCurrentFaultLog()	# Get the fault log for the current thread
 	
