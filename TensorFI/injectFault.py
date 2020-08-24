@@ -1,4 +1,4 @@
-# Library of fault injection functions called at runtime for common operations in TensorFlow
+#library of fault injection functions called at runtime for common operations in TensorFlow
 # NOTE: These are called by the corresponding functions inserted in the TensorFlow graph at RUNTIME
 
 import tensorflow as tf
@@ -35,6 +35,8 @@ def initFIConfig(fiParams):
 	global totalVistedOp
 	# which op to be injected in the whole run
 	global injectedOp
+	
+	global fiParamsGbl
 
 	fiConf = FIConfig(fiParams)
 	logging.debug("Initialized config file : " + str(fiConf))
@@ -49,6 +51,8 @@ def initFIConfig(fiParams):
 	randInstanceMap = {}
 	totalVistedOp = 0
 	injectedOp = 0
+	fiConf.configOff(fiParams)
+	fiParamsGbl = fiParams
 	return fiConf
 
 # End of fiConfing
@@ -159,6 +163,12 @@ def condPerturb(op, res):
 	# Pre-condition: injectMap != None && skipCount != None 
 	global count	# Keeps track of how many times the selected operation(s) are executed
 	global visitedOp
+	global configInst
+	global fiParamsGbl
+
+	if fiConf.configFault(fiParamsGbl):
+		# Updates instance if in instance mode
+		fiConf.updateInstance(op, fiParamsGbl)
 
 	faultLog = getCurrentFaultLog()	# Get the fault log for the current thread
 	

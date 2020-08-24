@@ -333,6 +333,9 @@ def yamlFaultParams(pStream):
 
 def configFaultParams(paramFile = None):
 	"Return the fault params from different files"
+	global fileName
+	fileName = paramFile
+
 	if paramFile == None:
 		return staticFaultParams()
 
