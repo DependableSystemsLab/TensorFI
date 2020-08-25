@@ -276,16 +276,18 @@ class FIConfig(object):
 
 	def configOn(self, confFile):
 		global fileName
+		
 		confFile['ConfigInst'] = True
 		confFile['Instances'] = None
 		self.totalInstance = 0
+		for op in self.opInstance:
+			self.opInstance[ op ] = 0
 
 		f = open(fileName, 'w')
 		try:
 			yaml.dump(confFile, f)
 		finally:
 			f.close()
-		#FIConfig.configInst[0] = True
 
 	def configOff(self, confFile):
 		global fileName
@@ -296,7 +298,6 @@ class FIConfig(object):
 			yaml.dump(confFile, f)
 		finally:
 			f.close()
-		#FIConfig.configInst[0] = False
 
 	def configFault(self, confFile):
 		return confFile['ConfigInst']

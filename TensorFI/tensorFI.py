@@ -6,7 +6,7 @@
 import tensorflow as tf
 import printGraph as pg
 import modifyGraph as mg
-from injectFault import initFIConfig, initFILog, logRun
+from injectFault import initFIConfig, initFILog, logRun, turnOffConfigFault, turnOnConfigFault
 from fiConfig import configFaultParams 
 import logging
 import fiStats
