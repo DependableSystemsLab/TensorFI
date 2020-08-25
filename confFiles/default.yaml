@@ -24,7 +24,7 @@ TensorFaultType: bitFlip-element
 
 Ops:
 # Choose operations which you want to inject
-#  - ALL = 1.0 # Chooses all operations
+  - ALL = 1.0 # Chooses all operations
 #  - LRN = 1.0 # Choose one operation only; 
 # - EQUAL = 1.0
 #  - SOFT-MAX = 1.0
@@ -57,4 +57,4 @@ Instances:
 # In the second and third mode, you'll need to specify the instances of all the operators in the algorithm
 
 # Allowed values: 1) "errorRate"; 2) "dynamicInstance"; 3) "oneFaultPerRun" 
-InjectMode: "dynamicInstance"
+InjectMode: "errorRate"

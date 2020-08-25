@@ -4,6 +4,7 @@
 
 import numpy as np
 from math import floor
+import random
 
 # Currently, we support 6 types of faults {None, Rand, Zero, Rand-element, bitFlip-element, bitFlip-tensor} - See fiConfig.py
 
@@ -121,12 +122,13 @@ def randomBitFlip(val):
 	intLength = len(integer)
 	decLength = len(dec)
 
-	# random index of the bit to flip  
-	index = np.random.randint(low=0 , high = intLength + decLength)
+	# random index of the bit to flip (switch to low=0 if you don't want to inject fault to sign bit)
+	index = np.random.randint(low=-1 , high = intLength + decLength)
  
- 	# flip the sign bit (optional)
-	#if(index==-1):
-	#	return val*negTag*(-1)
+ 	# injection index -1 is to flip the sign bit 
+
+	if(index==-1):
+		return val*negTag*(-1)
 
 	# bit to flip at the integer part
 	if(index < intLength):		
@@ -211,15 +213,16 @@ def randomBitMultiFlip(val, count):
 	decLength = len(dec)
 
 	# random index of the bit to flip  
-	list = np.random.sample(range(intLength + decLength), count)
-	
-	for index in list:
-		# flip the sign bit (optional)
-		#if(index==-1):
-		#	return val*negTag*(-1)
+	if (count > 1 + intLength + decLength):
+		count = 1 + intLength + decLength
+	list = random.sample(range(-1, intLength + decLength), count)
 
+	for index in list:
+		# injection index -1 is to flip the sign bit 
+		if(index==-1):
+			negTag = negTag * (-1)
 		# bit to flip at the integer part
-		if(index < intLength):		
+		elif(index < intLength):		
 			# bit flipped from 1 to 0, thus minusing the corresponding value
 			if(integer[index] == '1'):	val -= pow(2 , (intLength - index - 1))  
 			# bit flipped from 0 to 1, thus adding the corresponding value
@@ -228,29 +231,39 @@ def randomBitMultiFlip(val, count):
 		else:						
 			index = index - intLength 	  
 			# bit flipped from 1 to 0, thus minusing the corresponding value
-			if(dec[index] == '1'):	val -= 2 ** (-index-1)
+			if(dec[index] == '1'):	val -= pow(2.0, - index - 1)
 			# bit flipped from 0 to 1, thus adding the corresponding value
-			else:					val += 2 ** (-index-1) 
+			else:					val += pow(2.0, - index - 1)
 
 	return val*negTag
 
 def bitMultiScalar( dtype, val ):
-	"Flip multiple bits of the scalar value"   
-	fiConf = injectFault.getFIConfig()
+	"Flip multiple bits of the scalar value"  
+	from injectFault import getFIConfig
+	fiConf = getFIConfig()
 	
 	return dtype.type( randomBitMultiFlip(val, fiConf.bitCount) )
 	
 def bitMultiTensor( dtype, val):
-	"Flip ont bit of a random element in a tensor"
-	fiConf = injectFault.getFIConfig()
+	"Flip multiple bit of random elements in a tensor"
+	from injectFault import getFIConfig
+	fiConf = getFIConfig()
 	# flatten the tensor into a vector and then restore the original shape in the end
 	valShape = val.shape
 	val = val.flatten()
 	# select multiple random data items in the data space for injection
-	insertList = sorted(np.random.choice(range(len(val), fiConf.bitCount, replace=True)))
-	insertDict = { i : insertList.count(i) for i in insertList }
-	for index in insertDict:
-		val[index] = randomBitMultiFlip(val[index], insertDict[index])
+	if fiConf.bitCount is None:
+		fiConf.bitCount = 1
+	if len(val) == 0:
+		return dtype.type( val )
+
+	insertList = sorted([random.randint(0, len(val) - 1) for i in range(fiConf.bitCount)])
+	inserted = []
+	
+	for index in insertList:
+		if index not in inserted:
+			val[index] = randomBitMultiFlip(val[index], insertList.count(index))
+			inserted.append(index)
 	val = val.reshape(valShape)
 
 	return dtype.type( val )
