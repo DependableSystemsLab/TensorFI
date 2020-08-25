@@ -121,13 +121,12 @@ def randomBitFlip(val):
 	intLength = len(integer)
 	decLength = len(dec)
 
-	# random index of the bit to flip (switch to low=0 if you don't want to inject fault to sign bit)
-	index = np.random.randint(low=-1 , high = intLength + decLength)
+	# random index of the bit to flip  
+	index = np.random.randint(low=0 , high = intLength + decLength)
  
- 	# injection index -1 is to flip the sign bit 
-
-	if(index==-1):
-		return val*negTag*(-1)
+ 	# flip the sign bit (optional)
+	#if(index==-1):
+	#	return val*negTag*(-1)
 
 	# bit to flip at the integer part
 	if(index < intLength):		
