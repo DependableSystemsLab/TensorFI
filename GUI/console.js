@@ -21,16 +21,16 @@ rl.question("TensorFlow File Path: ", function(filePath) {
                         TensorFaultType: tensorFaultType,
                         InjectMode: injectMode,
 			Instances: null,
-			Ops: null
+			Ops: ['ALL = 1.0']
                     };
                     let yamlStr = yaml.safeDump(data);
-                    fs.writeFileSync('/home/daniel/TensorFICopy/GUITest/config.yaml', yamlStr, 'utf8');
+                    fs.writeFileSync('./config.yaml', yamlStr, 'utf8');
 
                     // Runs a python process with the required variables
                     var spawn = require("child_process").spawn; 
 
                     var parcer = spawn('python',["./parser.py", 
-                                       '/home/daniel/TensorFICopy/GUITest/config.yaml', 
+                                       './config.yaml', 
                                        logDir, 
                                        filePath]);
 
@@ -50,5 +50,20 @@ rl.question("TensorFlow File Path: ", function(filePath) {
 
 rl.on("close", function() {
     console.log(errorRate);
+    let data = yaml.safeLoad(fs.readFileSync('./config.yaml', 'utf8'));
+
+    if (data["Instances"] != null) {
+        data["Ops"] = [];
+        for (var instance in data["Instances"]) {
+            op = instance.split(" = ")[0];
+            rl.question(op + " (0.0 - 1.0): ", function(percent) {
+                data["Ops"].push(op + " = " + percent);
+            });
+        }
+    }
+    let yamlStr = yaml.safeDump(data);
+    fs.writeFileSync('./config.yaml', yamlStr, 'utf8');
+
     process.exit(0);
 });
+

@@ -35,7 +35,8 @@ try:
 			if "as" in line:
 				session = (line.split(" as ")[1]).split(":")[0]
 			if "=" in line:
-				session = (line.split("=")[0]).translate({ord(' '): None})
+				session = line.split("=")[0]
+				session = session.strip()
 
 		if not session is None:
 			if (session + ".run(") in line or not multiLine == "":
@@ -57,7 +58,7 @@ try:
 						inside = inside.replace("  ", "")
 						multiLine = ""
 
-				if not inside is None and len(inside.split(",")) > 1:
+				if not inside is None and (len(inside.split(",")) > 1 or runLine is None):
 					runLine = session + ".run" + inside
 
 			if ".eval(" in line:
@@ -66,6 +67,9 @@ try:
 		indentCount = len(line) - len(line.lstrip(' '))
 		writeFile.write(line)
 
+	if runLine is None:
+		raise Exception("File format not recognized")
+
 	tab = indentCount * " "
 	writeFile.write(tab + "import TensorFI as ti\n")
 	writeFile.write(tab + "fi = ti.TensorFI(" + session + ", configFileName = \"" + sys.argv[1] + "\", name = \"test\", logLevel = 0, disableInjections = True, logDir = \"" + sys.argv[2] + "\")\n")
@@ -73,7 +77,7 @@ try:
 	writeFile.write(tab + "fi.turnOnInjections()\n")
 	writeFile.write(tab + "fi.turnOnConfig()\n")
         writeFile.write(tab + "acc_no = numpy.around(" + runLine + "[0], decimals=7)\n")
-        writeFile.write(tab + "print(\"Accuracy (no injections): \" + str(acc_no))\n")
+        writeFile.write(tab + "print(\"Accuracy (with config): \" + str(acc_no))\n")
 	writeFile.write(tab + "fi.turnOffConfig()\n")
 
         writeFile.write(tab + "acc_fi = numpy.around(" + runLine + "[0], decimals=7)\n")
