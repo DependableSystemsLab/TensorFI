@@ -6,7 +6,7 @@
 import tensorflow as tf
 import printGraph as pg
 import modifyGraph as mg
-from injectFault import initFIConfig, initFILog, logRun
+from injectFault import initFIConfig, initFILog, logRun, turnOffConfigFault, turnOnConfigFault
 from fiConfig import configFaultParams 
 import logging
 import fiStats
@@ -379,4 +379,14 @@ class TensorFI:
 		logging.shutdown()
 	# Done with the destructor
 
+	def turnOffConfig(self):
+		"Turn off auto-configuration globally"
+		logging.info("Turning off auto-configuration")
+		turnOffConfigFault()
+
+	def turnOnConfig(self):
+		"Turn on auto-configuration globally"
+		logging.info("Turning on auto-configuration")
+		turnOnConfigFault()
+		
 # Done with the FI class

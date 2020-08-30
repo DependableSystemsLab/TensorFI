@@ -239,6 +239,80 @@ class FIConfig(object):
 			self.skipCount = 0
 	# End of constructor
 
+	def updateInstance(self, op, confFile):
+		global fileName
+
+		#if op.value in Ops:
+		instances = confFile['Instances']
+
+		if instances is None:
+			instances = []
+		
+		found = False
+		if confFile['Ops'] is not None:
+			for value in confFile['Ops']:
+				if (op.value in value) or ('ALL' in value):
+					found = True
+		if not found:
+			return
+
+		# Add the operation to the injectMap
+		self.totalInstance = self.totalInstance + 1
+		
+		if not op in self.opInstance:
+			self.opInstance[ op ] = 0
+		self.opInstance[ op ] = self.opInstance[ op ] + 1
+		
+		# Add the operation to the config file
+		found = False
+
+		for i in range(len(instances)):
+			(opType, instance) = instances[i].split(' = ')
+			if opType == op.value:
+				instances[i] = op.value + ' = ' + str(self.opInstance[ op ])
+				found = True
+		if not found:
+			instances.append(op.value + ' = ' + str(self.opInstance[ op ]))
+
+		confFile['Instances'] = instances
+
+		f = open(fileName, 'w')
+		try:
+			yaml.dump(confFile, f)
+		finally:
+			f.close()
+
+	def configOn(self, confFile):
+		global fileName
+		
+		confFile['ConfigInst'] = True
+		confFile['Instances'] = None
+		self.totalInstance = 0
+		for op in self.opInstance:
+			self.opInstance[ op ] = 0
+
+		f = open(fileName, 'w')
+		try:
+			yaml.dump(confFile, f)
+		finally:
+			f.close()
+
+	def configOff(self, confFile):
+		global fileName
+		if confFile.get('ConfigInst') is not None:
+			confFile['ConfigInst'] = False
+
+			f = open(fileName, 'w')
+			try:
+				yaml.dump(confFile, f)
+			finally:
+				f.close()
+
+	def configFault(self, confFile):
+		if confFile.get('ConfigInst') is not None:
+			return confFile['ConfigInst']
+		return False
+
 # End of class FIConfig
 
 # These are called from within modifyGraph to read the fault params in a file
@@ -271,6 +345,9 @@ def yamlFaultParams(pStream):
 
 def configFaultParams(paramFile = None):
 	"Return the fault params from different files"
+	global fileName
+	fileName = paramFile
+
 	if paramFile == None:
 		return staticFaultParams()
 
