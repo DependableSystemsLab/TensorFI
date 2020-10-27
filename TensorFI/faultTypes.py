@@ -86,22 +86,24 @@ def float2bin(number, decLength = 10):
 
 
 def randomBitFlip(val):
-	"Flip a random bit in the data to be injected" 
+	"Flip a random bit in the data to be injected"
 
 	# Split the integer part and decimal part in binary expression
 	def getBinary(number):
+		# float point datatype
+		if (isinstance(number, float)):
+			binVal = float2bin(number)
+			# split data into integer and decimal part
+			integer, dec = binVal.split(".")
 		# integer data type
-		if(floor(number) == number):
-			integer = bin(int(number)).lstrip("0b") 
+		else:
+			integer = bin(int(number)).lstrip("0b")
 			# 21 digits for integer
 			integer = integer.zfill(21)
+			# To prevent extra digits in integer
+			integer = integer[0:21]
 			# integer has no mantissa
-			dec = ''	
-		# float point datatype 						
-		else:
-			binVal = float2bin(number)				
-			# split data into integer and decimal part	
-			integer, dec = binVal.split(".")	
+			dec = ''
 		return integer, dec
 
 	# we use a tag for the sign of negative val, and then consider all values as positive values
