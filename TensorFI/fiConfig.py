@@ -17,6 +17,7 @@ class Ops(Enum):
 	SHAPE = "SHAPE"
 	SIZE = "SIZE"
 	FILL = "FILL"
+	FLOOR = "FLOOR"
 	FLOORMOD = "FLOOR-MOD"
 	RANGE = "RANGE"
 	RANK = "RANK"

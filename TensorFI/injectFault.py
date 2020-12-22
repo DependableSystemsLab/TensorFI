@@ -797,6 +797,15 @@ def injectFaultRandomUniform(a):
 	if logReturn: logging.debug("\tReturning from Random Uniform " + str(res) )
 	return res
 
+def injectFaultFloor(a):
+	"Function to call injectFault on Floor"
+	logging.debug("Calling Operator Floor" + getArgs(a))
+	res = np.floor(a)
+	res = condPerturb(Ops.FLOOR, res)
+	if logReturn: logging.debug("\tReturning from Floor " + str(res))
+	return res
+
+
 # End of implemented operators
 
 
@@ -1063,11 +1072,11 @@ def injectFaultAssignAdd(a):
 	logging.debug("Calling Operator AssignAdd")
 	raise NotImplementedError("AssignAdd")
 
-def injectFaultFloor(a):
-	"Function to call injectFault on Floor"
-	# FIXME: Implement this functionality
-	logging.debug("Calling Operator Floor")
-	raise NotImplementedError("Floor")
+# def injectFaultFloor(a):
+# 	"Function to call injectFault on Floor"
+# 	# FIXME: Implement this functionality
+# 	logging.debug("Calling Operator Floor")
+# 	raise NotImplementedError("Floor")
 
 def injectFaultSqueeze(a):
 	"Function to call injectFault on Squeeze"
