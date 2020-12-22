@@ -1072,12 +1072,6 @@ def injectFaultAssignAdd(a):
 	logging.debug("Calling Operator AssignAdd")
 	raise NotImplementedError("AssignAdd")
 
-# def injectFaultFloor(a):
-# 	"Function to call injectFault on Floor"
-# 	# FIXME: Implement this functionality
-# 	logging.debug("Calling Operator Floor")
-# 	raise NotImplementedError("Floor")
-
 def injectFaultSqueeze(a):
 	"Function to call injectFault on Squeeze"
 	# FIXME: Implement this functionality
