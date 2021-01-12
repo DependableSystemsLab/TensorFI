@@ -84,7 +84,7 @@ install all packages to your existing environment; but create a virtual env and
 then installing required packages in that. This is so that you can deactivate it
 and return to your original environment at any time.
 
-First, execute the **install-lib.sh**. This installs Anaconda for creating your
+First, execute the **install-env.sh**. This installs Anaconda for creating your
 virtual environment to run any TensorFI programs.
 
 After the script executes, source your ~/.bashrc file so the path variables
