@@ -1,5 +1,11 @@
 # TensorFI: A fault injector for TensorFlow applications
 
+[![GitHub license](https://img.shields.io/github/license/DependableSystemsLab/TensorFI)](https://github.com/DependableSystemsLab/TensorFI/blob/master/LICENSE)
+![PyPI - Downloads](https://img.shields.io/pypi/dm/TensorFI)
+[![GitHub issues](https://img.shields.io/github/issues/DependableSystemsLab/TensorFI)](https://github.com/DependableSystemsLab/TensorFI/issues)
+[![GitHub stars](https://img.shields.io/github/stars/DependableSystemsLab/TensorFI)](https://github.com/DependableSystemsLab/TensorFI/stargazers)
+[![GitHub forks](https://img.shields.io/github/forks/DependableSystemsLab/TensorFI)](https://github.com/DependableSystemsLab/TensorFI/network)
+
 TensorFI is a fault injector for TensorFlow applications written in 
 Python. It instruments the Tensorflow graph to inject faults at the
 level of individual operators. Unlike other fault injection tools,
