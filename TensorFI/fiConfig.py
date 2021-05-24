@@ -175,10 +175,11 @@ class FIConfig(object):
 		res.append(" }")
 		return "\n".join(res)
 
-	def __init__(self,fiParams):
+	def __init__(self, fiParams, opProbabilities):
 		"Configure the initial fault injection parameters from the fiParams Dictionary"
 		# First configure the Scalar fault type
 		# Default value of fault is NoFault
+		self.opProbabilities = opProbabilities
 		if fiParams.has_key(Fields.ScalarFaultType.value):
 			faultTypeScalar = fiParams[Fields.ScalarFaultType.value]
 		else:	

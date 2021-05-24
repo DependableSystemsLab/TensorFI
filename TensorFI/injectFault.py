@@ -23,7 +23,7 @@ logInjection = True	# log fault injection and checking
 # and is called from TensorFI.py's constructor
 
 # NOTE: This has to be in this module or else fiConf won't be accessible
-def initFIConfig(fiParams):
+def initFIConfig(fiParams, opProbabilities = []):
 	"Initialize the global variable fiConf with the params"
 	global fiConf
 	global count
@@ -36,7 +36,7 @@ def initFIConfig(fiParams):
 	# which op to be injected in the whole run
 	global injectedOp
 
-	fiConf = FIConfig(fiParams)
+	fiConf = FIConfig(fiParams, opProbabilities)
 	logging.debug("Initialized config file : " + str(fiConf))
 	
 	# Setup the random seed for the fault injector if one is specified
@@ -234,7 +234,7 @@ def condPerturb(op, res):
 				totalVistedOp += 1
 				# select one random op to be injected in the whole run
 				if(injectedOp == 0):
-					injectedOp = np.random.randint(low=1, high=totalInstance+1) 
+					injectedOp = np.random.choice(totalInstance, 1, fiConf.opProbabilities) + 1
 				# inject fault at the output of the operation
 				if(totalVistedOp == injectedOp):
 					res = perturb(res)
